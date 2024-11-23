@@ -17,7 +17,7 @@ import {useState} from 'react';
    * It will parse the contract and display the contract's methods.
    * @constructor
    */
-  export default function InteractContract() {
+  export default function TokenMint() {
     const { sdk, signIn, signOut } = useWallet();
 
     const{ balance, error } = useBalance("ethereum")
@@ -36,37 +36,33 @@ import {useState} from 'react';
     // const getParams = (abi: any, method: any) => {};
   
     
-    const [currentBalance, setCurrentBalance] = useState<string>("7");
+    const [mintDone, setMintDone] = useState<string>("notmint");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
   
-    const getBalance = async () => {
+    const getMintToken = async () => {
       try{
-        console.log('get');
         const [addresses] = await sdk.getWalletAddress("ethereum");
         console.log('ree');
         const result = await sdk.callContractMethod({
-          method: "balanceOf",
-          params: [addresses],
+          method: "mintTokens",
+          params: [addresses, 10000],
           abi: abi,
           contractAddress: contract,
         });
-        // console.log(result);
-        setCurrentBalance(result.toString());
-        console.log('set');
+        setMintDone(result.toString());
     } catch (error: any) {
       console.error(error);
       alert(error.message);
     } finally {
-      console.log('ccc');
+      console.log('mint');
     }
   };
     return (
       <div>
-        <Button onClick={getBalance}>Get balance</Button>
+        <Button onClick={getMintToken}>Mint Token</Button>
         <br />
-        <span>Balance: {currentBalance}</span>
-        <br />
+        <span>MintSuccess: {mintDone}</span>
       </div>
     );
   }
