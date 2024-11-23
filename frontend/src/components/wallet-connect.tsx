@@ -16,15 +16,11 @@ import {
 export function WalletConnect() {
   const { sdk, signIn, signOut } = useWallet();
   const { balance, error } = useBalance(
-    "ethereum",
-    "solana",
-    "bnb",
-    "optimism",
+    "ethereum"
   );
   // const router = useRouter();
   const { addresses, isLoading: isAddressesLoading } = useAddresses(
-    "ethereum",
-    "solana",
+    "ethereum"
   );
 
   const handleSignOut = async () => {
@@ -115,7 +111,7 @@ export function WalletConnect() {
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {p.metadata.description}
-                        </p>
+                        </p >
                       </div>
                       <Button
                         variant={
