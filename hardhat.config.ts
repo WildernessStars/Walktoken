@@ -12,7 +12,7 @@ const { PRIVATE_KEY } = process.env;
 // have to has an economic model
 const config: HardhatUserConfig = {
   solidity: {
-    version: "0.8.19",
+    version: "0.8.20",
     settings: {
       optimizer: {
         enabled: true,
@@ -31,13 +31,11 @@ const config: HardhatUserConfig = {
     },
     local: {
       url: "http://localhost:8545",
-      accounts: [
-        "",
-      ],
+      accounts: PRIVATE_KEY ? [process.env.PRIVATE_KEY!] : [],
     },
     hardhat: {
       accounts: {
-        mnemonic: process.env.SEED_PHRASE,
+        mnemonic: process.env.MNEMONIC
       },
       chainId: 1337,
     },
