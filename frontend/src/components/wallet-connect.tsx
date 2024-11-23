@@ -2,7 +2,7 @@
 import Button from '@mui/material/Button';
 import { Card, CardContent, CardHeader } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import React from "react";
 import {
   AvailableProvider,
@@ -21,7 +21,7 @@ export function WalletConnect() {
     "bnb",
     "optimism",
   );
-  const router = useRouter();
+  // const router = useRouter();
   const { addresses, isLoading: isAddressesLoading } = useAddresses(
     "ethereum",
     "solana",
@@ -35,7 +35,7 @@ export function WalletConnect() {
     await signIn(providerName, {
       onSignedIn: async (walletAddress, provider, session) => {
         sessionStorage.setItem("session", JSON.stringify(session));
-        router.refresh();
+        // router.refresh();
       },
       getSignInData: async () => {},
     });
