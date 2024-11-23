@@ -46,7 +46,8 @@ describe("WalkToken Contract", function () {
     });
   });
 
-  describe("Minting Tokens", function () {
+ describe("Minting Tokens", function () {
+
 
     it("Owner can mint tokens based on steps", async function () {
       const { walkToken, addr1 } = await loadFixture(deployWalkTokenFixture);
@@ -77,6 +78,14 @@ describe("WalkToken Contract", function () {
         // Verify total supply equals the cap
         expect(await walkToken.totalSupply()).to.equal(totalSupplyCap);
       });
+
+      it("Should not allow a non-owner to mint tokens", async function () {
+        const { WalkToken, walkToken, owner, addr1 } = await loadFixture(
+            deployWalkTokenFixture
+        );
+        await expect(walkToken.connect(owner).mintTokens(owner.address, 0)).to.be.revertedWith("Not enough steps");
+      });
+
     });
 
   describe("Utility Functions", function () {
