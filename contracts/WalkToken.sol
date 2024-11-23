@@ -17,6 +17,9 @@ contract WalkToken is ERC20, Ownable {
     // Total supply cap of 1,000,000 tokens (in atomic units)
     uint256 private immutable _totalSupplyCap = 1_000_000 * (10 ** uint256(_customDecimals));
 
+    // Mapping to store the last mint day for each address
+    mapping(address => uint256) private _lastMintedDay;
+
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
      */
@@ -35,15 +38,26 @@ contract WalkToken is ERC20, Ownable {
 
     /**
      * @dev Mint tokens based on steps walked. Only owner can call.
+     * Each address can only receive tokens once per day.
      * @param to The address to receive the tokens.
      * @param steps The number of steps walked.
      */
     function mintTokens(address to, uint256 steps) external onlyOwner {
+        uint256 currentDay = block.timestamp / 1 days;
+
+        // Ensure the address hasn't received tokens today
+        require(_lastMintedDay[to] < currentDay, "Address can only receive tokens once per day");
+
         uint256 tokensToMint = stepsToTokens(steps);
         require(tokensToMint > 0, "Not enough steps");
         require(totalSupply() + tokensToMint <= _totalSupplyCap, "Total supply cap exceeded");
+
+        // Update the last mint day for the address
+        _lastMintedDay[to] = currentDay;
+
         _mint(to, tokensToMint);
     }
+
 
     /**
      * @dev Convert steps to tokens. Each step gives 0.001 tokens.
