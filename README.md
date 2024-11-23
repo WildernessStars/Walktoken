@@ -6,16 +6,22 @@
 Clone our repository using the following command:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/WildernessStars/Walktoken.git
 ```
 
 ## Step 2: Add Dependencies
 Install all necessary dependencies with this command:
 
 ```bash
-pnpm add @nomicfoundation/hardhat-toolbox hardhat @nomicfoundation/hardhat-chai-matchers @nomicfoundation/hardhat-ethers @nomicfoundation/hardhat-ignition @openzeppelin/contracts dayjs dotenv ethers solidity-coverage chai@4.4.1 @types/chai
+pnpm i
 ```
 
+## Step 3: Add Environment Variable
+Create a .env file, set PRIVATE_KEY and MNEMONIC. ie. Replace xxx with your own PRIVATE_KEY and MNEMONIC
+```bash
+PRIVATE_KEY=xxx
+MNEMONIC="xxx xxx"
+```
 ## Step 3: Compile the Project
 Compile the project by running:
 
@@ -26,7 +32,7 @@ pnpm run compile
 Run the tests with the following command:
 
 ```bash
-git clone <repository-url>
+pnpm run test
 ```
 ## Step 5: Run the GUI
 ### Step 5.1: Navigate to the frontend directory
@@ -38,6 +44,6 @@ pnpm i
 ### Step 5.3: Start the development server:
 
 ```bash
-pnpm i
+pnpm dev
 ```
 ### Step 5.4: Open your browser and go to http://localhost:3000.
