@@ -5,13 +5,12 @@ const partners = [
   { name: 'Binance', logo: '/binance-logo.png' },
   { name: 'Coinbase', logo: '/coinbase-logo.png' },
   { name: 'Ledger', logo: '/ledger-logo.png' },
-  { name: 'Blockchain.com', logo: '/blockchain-logo.png' },
-  { name: 'Certik', logo: '/certik-logo.png' },
+  { name: 'Blockchain.com', logo: '/blockchain-logo.png' }
 ]
 
 export default function PartnersSection() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-gray-100">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-green-50">
       <div className="container px-4 md:px-6">
         <div className="flex flex-wrap justify-center items-center gap-8">
           {partners.map((partner) => (
@@ -20,7 +19,7 @@ export default function PartnersSection() {
                 src={partner.logo} 
                 alt={`${partner.name} logo`} 
                 width={120} 
-                height={40} 
+                height={20} 
                 className="h-8 w-auto object-contain"
               />
             </div>
