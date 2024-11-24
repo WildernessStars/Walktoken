@@ -5,7 +5,7 @@ const partners = [
   { name: 'Binance', logo: '/binance-logo.png' },
   { name: 'Coinbase', logo: '/coinbase-logo.png' },
   { name: 'Ledger', logo: '/ledger-logo.png' },
-  { name: 'Blockchain.com', logo: '/blockchain-logo.png' },
+  { name: 'Blockchain.com', logo: '/blockchain-logo.png' }
 ]
 
 export default function PartnersSection() {

@@ -1,12 +1,12 @@
 import Image from 'next/image'
 import Button from '@mui/material/Button';
 
+
 interface HeroSectionProps {
     scrollToTokenSection: () => void;
   }
   
-  export default function HeroSection({ scrollToTokenSection }: HeroSectionProps) {
-   
+export default function HeroSection({ scrollToTokenSection }: HeroSectionProps) {
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-green-50">
       <div className="container px-4 md:px-6 mx-auto">

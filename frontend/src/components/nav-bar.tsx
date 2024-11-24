@@ -12,6 +12,7 @@ const navItems = [
   { name: 'Features', href: '/features' },
   { name: 'Contact', href: '/contact' },
 ]
+
 interface NavbarProps {
     scrollToTokenSection: () => void;
   }
@@ -27,7 +28,6 @@ export default function Navbar({ scrollToTokenSection }: NavbarProps) {
             <Image src="/image/logo.jpg" alt="Walk to Earn Logo" width={40} height={40} />
             <span className="ml-2 text-xl font-bold text-gray-800">Walk to Earn</span>
           </div>
-          
           <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
             {navItems.map((item) => (
               <Link
