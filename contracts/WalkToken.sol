@@ -68,4 +68,12 @@ contract WalkToken is ERC20, Ownable {
         // Since each step gives 0.001 tokens, and decimals is 3, each step gives 1 atomic unit
         return steps;
     }
+
+    /**
+     * @dev Returns the current unissued amount of the token.
+     * @return The number of tokens that are yet to be minted (in atomic units).
+     */
+    function getUnissuedTokens() public view returns (uint256) {
+        return _totalSupplyCap - totalSupply();
+    }
 }
