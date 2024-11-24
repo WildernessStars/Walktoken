@@ -3,19 +3,42 @@
 @tailwind utilities;
 
 :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --primary: 271 81% 56%;
-    --primary-foreground: 210 40% 98%;
-    /* ... 其他颜色变量 */
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 271 81% 56%;
+  --primary-foreground: 210 40% 98%;
+  /* ... 其他颜色变量 */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    /* ... 其他暗色模式颜色变量 */
   }
-  
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 222.2 84% 4.9%;
-      --foreground: 210 40% 98%;
-      /* ... 其他暗色模式颜色变量 */
-    }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.5;
   }
-  
-  
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Add this to ensure the body takes up the full viewport height */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1;
+}
+
