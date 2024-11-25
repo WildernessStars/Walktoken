@@ -7,6 +7,9 @@ import PartnersSection from '@/components/partner-section'
 import Navbar from "@/components/nav-bar";
 import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
+import TokenSection from "@/components/token-section";
+import { useRef } from 'react';
+
 
 
 // TODO: 获取用户的NFTs
@@ -24,28 +27,38 @@ const myImages = [
 ];
 
 export default function Home() {
+  const tokenSectionRef = useRef<HTMLDivElement>(null);
+
+  const scrollToTokenSection = () => {
+    tokenSectionRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+  
+  // <div ref={tokenSectionRef}>
+  //   <TokenSection sdk={{}} abi={{}} contract="" />
+  // </div>
   return (
     
     <div>
        <main className="flex min-h-screen flex-col items-center justify-between">
-       <Navbar />
-      <HeroSection />      
+       <Navbar scrollToTokenSection={scrollToTokenSection} />
+       <HeroSection scrollToTokenSection={scrollToTokenSection} />
+      {/* <PartnersSection /> */}
+      <TokenSection 
+        ref={tokenSectionRef}
+        sdk={{}} 
+        abi={{}} 
+        contract="" 
+      />
       <div/>
               <h1 className="text-3xl font-bold mb-8 text-center">My Own NFTs</h1>
               <div className="mb-8">
               <ImageGallery images={myImages} />
       </div>
       <div/>
-              <h1 className="text-3xl font-bold mb-8 text-center">Redeem NFTs</h1>
-              <div className="mb-8">
-        
-      </div>
-      
+
       <ProductGrid />
-    </main>
-    <div className="p-4">
-      <WalletConnect/>
-    </div>
+      </main>
+
     <div>
       <InteractContract />
     </div>

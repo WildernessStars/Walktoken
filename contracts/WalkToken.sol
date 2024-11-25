@@ -76,7 +76,7 @@ contract WalkToken is ERC20, Ownable {
     function getUnissuedTokens() public view returns (uint256) {
         return _totalSupplyCap - totalSupply();
     }
-
+    
     /**
      * @dev Burn tokens from a specified address. Only owner can call.
      * @param from The address from which the tokens will be burned.
