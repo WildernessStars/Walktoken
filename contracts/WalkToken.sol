@@ -37,12 +37,12 @@ contract WalkToken is ERC20, Ownable {
     }
 
     /**
-     * @dev Mint tokens based on steps walked. Only owner can call.
+     * @dev Mint tokens based on steps walked.
      * Each address can only receive tokens once per day.
      * @param to The address to receive the tokens.
      * @param steps The number of steps walked.
      */
-    function mintTokens(address to, uint256 steps) external onlyOwner {
+    function mintTokens(address to, uint256 steps) external {
         uint256 currentDay = block.timestamp / 1 days;
 
         // Ensure the address hasn't received tokens today
@@ -78,11 +78,11 @@ contract WalkToken is ERC20, Ownable {
     }
     
     /**
-     * @dev Burn tokens from a specified address. Only owner can call.
+     * @dev Burn tokens from a specified address.
      * @param from The address from which the tokens will be burned.
      * @param amount The number of tokens to burn (in atomic units).
      */
-    function burnTokens(address from, uint256 amount) external onlyOwner {
+    function burnTokens(address from, uint256 amount) external {
         _burn(from, amount);
     }
 }
