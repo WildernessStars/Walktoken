@@ -39,12 +39,8 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       // Get user's address
       const userAddress = await signer.getAddress();
 
-      // Convert price to wei
-      // const priceInWei = ethers.parseEther(price.toString());
-
       // Call burnTokens function
-      // console.log(priceInWei)
-      const burnTx = await tokenContract.burnTokens(userAddress, 1000);
+      const burnTx = await tokenContract.burnTokens(userAddress, price * 100);
       await burnTx.wait();
       
       // // Call mintProduct function

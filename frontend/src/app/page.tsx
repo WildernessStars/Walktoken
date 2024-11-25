@@ -50,7 +50,7 @@ export default function Home() {
         contract="" 
       />
       <div/>
-              <h1 className="text-3xl font-bold mb-8 text-center">My Own NFTs</h1>
+              <h1 className="text-3xl font-bold mb-8 text-center">Your Own NFTs</h1>
               <div className="mb-8">
               <ImageGallery images={myImages} />
       </div>
