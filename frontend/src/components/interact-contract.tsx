@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import {useState} from 'react';
 
 
-  const contract = "0x1ea876a123080211b2399AD490873aC13708C051";
+  const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
   
   /**
    * This component allows user to upload a contract and interact with it.

@@ -6,6 +6,7 @@ import {
     useBalance,
     useWallet,
   } from "web3-connect-react";
+import { JsonRpcProvider, ethers } from "ethers";
 import { useState,useEffect, forwardRef } from "react"
 import { LogOut, Wallet } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
@@ -13,7 +14,7 @@ import CircularImage from './circular-image';
 import abi from "./abi.json";
 
 
-const contract = "0x1ea876a123080211b2399AD490873aC13708C051";
+const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
 const TransparentCard = styled(Card)(({ theme }) => ({
     backgroundColor: 'rgba(13, 17, 37, 0.8)',
     color: 'white',
@@ -51,6 +52,8 @@ const TransparentCard = styled(Card)(({ theme }) => ({
       );
     const [isConnected, setIsConnected] = useState(false);
     const [currentBalance, setCurrentBalance] = useState('');
+    const [notIssued, setNotIssued] = useState('');
+    
     // const router = useRouter();
     const { addresses, isLoading: isAddressesLoading } = useAddresses(
     "ethereum"
@@ -81,11 +84,29 @@ const TransparentCard = styled(Card)(({ theme }) => ({
           // alert(error);
         }
       };
+      const getNotIssued = async () => {
+        try {
+          const provider = new JsonRpcProvider('https://rpc5.gemini.axiomesh.io/');
+          const contracti = new ethers.Contract(contract, abi, provider);
+  
+          const result = await contracti.totalSupply();
+          const formattedTotal = (1000000 - Number(result) / 1000).toFixed(3);
+          setNotIssued(formattedTotal);
+        } catch (error) {
+          console.error("Error fetching unissued tokens:", error);
+          setNotIssued('Error');
+        }
+      };
+
+      useEffect(() => {
+        getNotIssued();
+      }, []); 
     
       useEffect(() => {
         if (isConnected) {
           getBalance();
         }
+        getNotIssued();
       }, [isConnected]);
 
     const handleSignIn = async (providerName: AvailableProvider) => {
@@ -157,7 +178,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                         textShadow: '0 2px 4px rgba(0,0,0,0.5)'
                       }}
                     >
-                      50,000,000,000 left
+                      {notIssued} left
                     </Typography>
                   </>
                 ) : (
