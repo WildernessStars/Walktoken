@@ -7,13 +7,13 @@ Clone our repository using the following command:
 
 ```bash
 git clone https://github.com/WildernessStars/Walktoken.git
+cd Walktoken
 ```
 
 ## Step 2: Add Dependencies
 Install all necessary dependencies with this command:
 
 ```bash
-cd Walktoken
 pnpm i
 ```
 
@@ -40,6 +40,7 @@ pnpm run test
 ### Step 5.2: Install frontend dependencies:
 
 ```bash
+cd frontend
 pnpm i
 ```
 ### Step 5.3: Start the development server:
