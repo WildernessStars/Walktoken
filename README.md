@@ -13,22 +13,23 @@ git clone https://github.com/WildernessStars/Walktoken.git
 Install all necessary dependencies with this command:
 
 ```bash
+cd Walktoken
 pnpm i
 ```
 
 ## Step 3: Add Environment Variable
 Create a .env file, set PRIVATE_KEY and MNEMONIC. ie. Replace xxx with your own PRIVATE_KEY and MNEMONIC
 ```bash
-PRIVATE_KEY=xxx
-MNEMONIC="xxx xxx"
+PRIVATE_KEY=YOUR_OWN_PRIVATE_KEY
+MNEMONIC="YOUR_OWN_MNEMONIC"
 ```
-## Step 3: Compile the Project
+## Step 4: Compile the Project
 Compile the project by running:
 
 ```bash
 pnpm run compile
 ```
-## Step 4 (optional): Run Tests
+## Step 4.1 (optional): Run Tests
 Run the tests with the following command:
 
 ```bash
