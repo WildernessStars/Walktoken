@@ -5,6 +5,8 @@ import { Button } from '@mui/material';
 import { ethers, JsonRpcProvider } from 'ethers';
 import tokenABI from "./abi.json";
 import productABI from "./nft_abi.json";
+import address from "./address.json";
+
 // import { MetaMaskInpageProvider } from '@metamask/providers';
 
 interface BuyButtonProps {
@@ -27,8 +29,8 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       const signer = await provider.getSigner()
       
       // Contract addresses (replace with actual addresses)
-      const tokenContractAddress =   "0x01A963BAc60d41C65db5E131E530Ae1254bdcA0F"; 
-      const productContractAddress = "0xF1270f5b9062BCeE3dA24fFa7f910ABbab225a8f"; 
+      const tokenContractAddress = address.WalkTokenAddress;
+      const productContractAddress = address.NFTAddress;
 
       // Create contract instances
       const tokenContract = new ethers.Contract(tokenContractAddress, tokenABI, signer);
@@ -49,7 +51,7 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       const mintTx = await productContract.mintProduct(userAddress, tokenURI);
       await mintTx.wait();
 
-      console.log(`Purchased product ${productId}`);
+      alert(`Purchased product ${productId}`);
       setIsPurchased(true);
       
     } catch (error) {
