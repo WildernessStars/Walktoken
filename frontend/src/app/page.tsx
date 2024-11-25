@@ -55,8 +55,7 @@ export default function Home() {
               <ImageGallery images={myImages} />
       </div>
       <div/>
-          
-              
+
       <ProductGrid />
       </main>
 

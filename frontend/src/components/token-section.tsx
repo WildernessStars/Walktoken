@@ -15,6 +15,7 @@ import abi from "./abi.json";
 
 
 const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
+
 const TransparentCard = styled(Card)(({ theme }) => ({
     backgroundColor: 'rgba(13, 17, 37, 0.8)',
     color: 'white',
@@ -54,6 +55,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     const [currentBalance, setCurrentBalance] = useState('');
     const [notIssued, setNotIssued] = useState('');
     
+
     // const router = useRouter();
     const { addresses, isLoading: isAddressesLoading } = useAddresses(
     "ethereum"
@@ -101,6 +103,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
       useEffect(() => {
         getNotIssued();
       }, []); 
+
     
       useEffect(() => {
         if (isConnected) {
