@@ -40,14 +40,18 @@ import address from "./address.json";
     const [mintDone, setMintDone] = useState<string>("notmint");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
-  
+
+    function getRandomInt(min: number, max: number): number {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
     const getMintToken = async () => {
       try{
         const [addresses] = await sdk.getWalletAddress("ethereum");
         console.log('ree');
         const result = await sdk.callContractMethod({
           method: "mintTokens",
-          params: [addresses, 10000],
+          params: [addresses, getRandomInt(8000, 20000)],
           abi: abi,
           contractAddress: contract,
         });
