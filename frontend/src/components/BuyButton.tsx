@@ -39,8 +39,8 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       // Get user's address
       const userAddress = await signer.getAddress();
 
-      // Call burnTokens function                  TODO: change to (price * 1000).toFixed(3)
-      const burnTx = await tokenContract.burnTokens(userAddress, (price * 10).toFixed(3));
+      // Call burnTokens function
+      const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
       await burnTx.wait();
       
       // // Call mintProduct function
@@ -52,7 +52,7 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       
     } catch (error) {
       console.error("Error during purchase:", error);
-      alert("There was an error processing your purchase. Please try again.");
+      alert("You don't have enough Walk Token");
     } finally {
       setIsProcessing(false);
     }
@@ -60,7 +60,7 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
 
   return (
     <Button onClick={handleBuy} disabled={isPurchased || isProcessing}>
-      {isProcessing ? 'Processing...' : isPurchased ? 'Purchased!' : 'Buy Now'}
+      {isProcessing ? 'Processing...' : isPurchased ? 'Sold!' : 'Buy Now'}
     </Button>
   );
 }
