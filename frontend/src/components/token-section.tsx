@@ -12,10 +12,9 @@ import { LogOut, Wallet } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
 import CircularImage from './circular-image';
 import abi from "./abi.json";
-import address from "./address.json";
 
 
-const contract = address.WalkTokenAddress;
+const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
 
 const TransparentCard = styled(Card)(({ theme }) => ({
     backgroundColor: 'rgba(13, 17, 37, 0.8)',

@@ -22,13 +22,9 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-lg font-semibold">{product.name}</h3>
-            <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+            <p className="text-sm text-gray-500">{product.price.toFixed(2)} WalkTokens</p>
           </div>
-          <BuyButton 
-            productId={product.id} 
-            price={product.price} 
-            tokenURI={`https://example.com/metadata/${product.id}`} 
-          />
+          <BuyButton productId={product.id} />
         </div>
       </CardContent>
     </Card>
