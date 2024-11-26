@@ -8,9 +8,10 @@ import {
   import abi from "./abi.json";
 import Button from '@mui/material/Button';
 import {useState} from 'react';
+import address from "./address.json";
 
 
-  const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
+  const contract = address.WalkTokenAddress;
   
   /**
    * This component allows user to upload a contract and interact with it.
@@ -39,14 +40,18 @@ import {useState} from 'react';
     const [mintDone, setMintDone] = useState<string>("notmint");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
-  
+
+    function getRandomInt(min: number, max: number): number {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    
     const getMintToken = async () => {
       try{
         const [addresses] = await sdk.getWalletAddress("ethereum");
         console.log('ree');
         const result = await sdk.callContractMethod({
           method: "mintTokens",
-          params: [addresses, 10000],
+          params: [addresses, getRandomInt(8000, 20000)],
           abi: abi,
           contractAddress: contract,
         });
