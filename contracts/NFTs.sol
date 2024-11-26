@@ -14,11 +14,11 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
     constructor() ERC721("WalkToken", "WLK") Ownable(msg.sender) {}
 
     /**
-     * @dev Mints a new product NFT with a token URI. Only the contract owner can call this function.
+     * @dev Mints a new product NFT with a token URI.
      * @param to The address that will receive the minted NFT.
      * @param tokenURI The token URI pointing to the image or metadata.
      */
-    function mintProduct(address to, string memory tokenURI) external onlyOwner {
+    function mintProduct(address to, string memory tokenURI) external {
         require(totalMinted < MAX_PRODUCTS, "All products have been minted");
         uint256 tokenId = totalMinted + 1; // Token IDs start from 1
         _safeMint(to, tokenId);
