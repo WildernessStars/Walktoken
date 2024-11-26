@@ -4,7 +4,7 @@ import path from 'path';
 
 export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'src\\lib', 'minted_nfts.json');
+    const filePath = path.join(process.cwd(), 'src', 'lib', 'minted_nfts.json');
     const fileContent = await fs.readFile(filePath, 'utf8');
     const nftData = JSON.parse(fileContent);
     

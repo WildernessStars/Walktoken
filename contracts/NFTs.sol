@@ -27,6 +27,19 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
         return tokenId;
     }
 
+    function getAllNFTs(address owner) external view returns (uint256[] memory) {
+        uint256 totalSupply = MAX_PRODUCTS;
+        uint256[] memory tokens = new uint256[](balanceOf(owner));
+        uint256 index = 0;
+        
+        for (uint256 tokenId = 1; tokenId <= totalSupply; tokenId++) {
+            if (ownerOf(tokenId) == owner) {
+                tokens[index] = tokenId;
+                index++;
+            }
+        }
+        return tokens;
+    }
 
     /**
      * @dev Allows the holder of an NFT to redeem it for the actual product.

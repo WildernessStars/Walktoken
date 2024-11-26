@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from "next/image";
-import { Card, CardContent, Box } from '@mui/material';
+import { Card, CardContent, Box, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
-
-interface ImageGalleryProps {
-  images: string[];
-  title?: string;
-}
+import { ethers } from 'ethers';
+import productABI from "./nft_abi.json";
+import Caddress from "./address.json";
 
 const ScrollArea = styled('div')({
   overflowX: 'auto',
@@ -46,26 +44,77 @@ const RightGradient = styled(GradientOverlay)({
   background: 'linear-gradient(to left, white, transparent)',
 });
 
-export default function ImageGallery({ images, title }: ImageGalleryProps) {
+export default function ImageGallery() {
+  const [nfts, setNfts] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const connectAndFetchNFTs = async () => {
+      if (typeof window.ethereum === 'undefined') {
+        setError('Please install MetaMask!');
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
+
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        console.log(address)
+        const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
+        console.log(contract)
+        const tokenIds = await contract.getAllNFTs(address);
+        console.log(tokenIds)
+        
+        const imageUrls = tokenIds.map((id: number) => `/api/nft-image/${id}`);
+        setNfts(imageUrls);
+      } catch (error) {
+        console.error("Failed to connect wallet or fetch NFTs:", error);
+        setError('Failed to fetch NFTs. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    connectAndFetchNFTs();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ textAlign: 'center', color: 'error.main' }}>
+        {error}
+      </Box>
+    );
+  }
+
+  if (nfts.length === 0) {
+    return (
+      <Box sx={{ textAlign: 'center' }}>
+        No NFTs found for this wallet.
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ width: '100%', maxWidth: '80%', margin: '0 auto', padding: '0 16px' }}>
-      {title && (
-        <Box component="h2" sx={{ 
-          fontSize: { xs: '1.5rem', sm: '1.875rem' }, 
-          fontWeight: 'bold', 
-          textAlign: 'center', 
-          mb: { xs: 3, sm: 4 } 
-        }}>
-          {title}
-        </Box>
-      )}
       <Card sx={{ bgcolor: 'transparent', boxShadow: 'none', position: 'relative' }}>
         <CardContent sx={{ p: 0, position: 'relative', '&:last-child': { pb: 0 } }}>
           <LeftGradient />
           <RightGradient />
           <ScrollArea>
             <Box sx={{ display: 'flex', p: 2 }}>
-              {images.map((image, index) => (
+              {nfts.map((image, index) => (
                 <Box 
                   key={index} 
                   sx={{ 

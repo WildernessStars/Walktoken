@@ -10,7 +10,13 @@ import address from "./address.json";
 interface BuyButtonProps {
   productId: number;
   price: number;
-  tokenURI: string;
+  tokenURI : string;
+  // tokenURI: {
+  //   name: string,
+  //   image: string,
+  //   description: string,
+  //   attributes: list
+  // };
   onPurchase: () => void;
 }
 
@@ -22,10 +28,10 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
     setIsProcessing(true);
     try {
       // Connect to MetaMask
-      await window.ethereum.request({ method: 'eth_requestAccounts' })
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
 
-      const provider = new ethers.BrowserProvider(window.ethereum)
-      const signer = await provider.getSigner()
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
       
       // Contract addresses (replace with actual addresses)
       const tokenContractAddress = address.WalkTokenAddress;
