@@ -47,8 +47,10 @@ describe("WalkToken Contract", function () {
   });
 
  describe("Minting Tokens", function () {
+
+
     it("Owner can mint tokens based on steps", async function () {
-      const { walkToken, owner, addr1 } = await loadFixture(deployWalkTokenFixture);
+      const { walkToken, addr1 } = await loadFixture(deployWalkTokenFixture);
 
       await walkToken.mintTokens(addr1.address, 1000); // Minting for 1000 steps
       const addr1Balance = await walkToken.balanceOf(addr1.address);
