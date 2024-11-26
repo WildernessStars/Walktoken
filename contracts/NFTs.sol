@@ -18,13 +18,15 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
      * @param to The address that will receive the minted NFT.
      * @param tokenURI The token URI pointing to the image or metadata.
      */
-    function mintProduct(address to, string memory tokenURI) external {
+    function mintProduct(address to, string memory tokenURI) external returns (uint256) {
         require(totalMinted < MAX_PRODUCTS, "All products have been minted");
         uint256 tokenId = totalMinted + 1; // Token IDs start from 1
-        _safeMint(to, tokenId);
         _setTokenURI(tokenId, tokenURI); // Set the token URI for metadata
+        _safeMint(to, tokenId);
         totalMinted++;
+        return tokenId;
     }
+
 
     /**
      * @dev Allows the holder of an NFT to redeem it for the actual product.
