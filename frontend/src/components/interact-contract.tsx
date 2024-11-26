@@ -8,10 +8,9 @@ import {
   import abi from "./abi.json";
 import Button from '@mui/material/Button';
 import {useState} from 'react';
-import address from "./address.json";
 
 
-  const contract = address.WalkTokenAddress;
+  const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
   
   /**
    * This component allows user to upload a contract and interact with it.

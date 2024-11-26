@@ -8,10 +8,9 @@ import {
   import abi from "./abi.json";
 import Button from '@mui/material/Button';
 import {useState} from 'react';
-import address from "./address.json";
 
 
-  const contract = address.WalkTokenAddress;
+  const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
   
   /**
    * This component allows user to upload a contract and interact with it.
@@ -22,12 +21,6 @@ import address from "./address.json";
     const { sdk, signIn, signOut } = useWallet();
 
     const{ balance, error } = useBalance("ethereum")
-    // const { balance } = useSplWalletBalance(
-    //   "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
-    // );
-    // const getContractMethods = (abi: any) => {
-    //   return abi.filter((method: any) => method.type === "function");
-    // };
   
     // /**
     //  * Get list of parameters for a method
@@ -40,18 +33,14 @@ import address from "./address.json";
     const [mintDone, setMintDone] = useState<string>("notmint");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
-
-    function getRandomInt(min: number, max: number): number {
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    }
-    
+  
     const getMintToken = async () => {
       try{
         const [addresses] = await sdk.getWalletAddress("ethereum");
         console.log('ree');
         const result = await sdk.callContractMethod({
           method: "mintTokens",
-          params: [addresses, getRandomInt(8000, 20000)],
+          params: [addresses, 10000],
           abi: abi,
           contractAddress: contract,
         });
