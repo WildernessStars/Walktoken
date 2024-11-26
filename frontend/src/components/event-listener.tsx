@@ -22,7 +22,7 @@ const safeStringify = (obj: any): string => {
 
 export default function EventListener({}: EventListenerProps) {
     const [events, setEvents] = useState<string[]>([])
-    const [isPolling, setIsPolling] = useState(false)
+    const [isPolling, setIsPolling] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [lastBlockChecked, setLastBlockChecked] = useState<number | null>(null)
     const [latestEvent, setLatestEvent] = useState<string | null>(null)
@@ -36,9 +36,10 @@ export default function EventListener({}: EventListenerProps) {
   
         const filter = contract.filters[eventName]()
         const latestBlock = await provider.getBlockNumber()
-        const fromBlock = lastBlockChecked ? lastBlockChecked + 1 : latestBlock - 100 // Start from 100 blocks ago if no last block
+        const fromBlock = lastBlockChecked ? lastBlockChecked +1 : latestBlock - 100 // Start from 100 blocks ago if no last block
   
         const logs = await contract.queryFilter(filter, fromBlock, latestBlock)
+        // let tokenIds: string[] = []
   
         if (logs.length > 0) {
           const newEvents = logs.map(log => {
@@ -47,16 +48,19 @@ export default function EventListener({}: EventListenerProps) {
           })
           setEvents(prevEvents => {
             const updatedEvents = [...prevEvents, ...newEvents];
+            console.log(updatedEvents.length,prevEvents.length );
             if (updatedEvents.length > prevEvents.length) {
               setLatestEvent(newEvents[newEvents.length - 1]);
-            //   console.log(latestEvent);
+              // tokenIds.push(newEvents[newEvents.length - 1])
             } else{
-                setLatestEvent(prevEvents[prevEvents.length - 1]);
+              setLatestEvent(prevEvents[prevEvents.length - 1]);
             }
             return updatedEvents;
           })
+        }else{
+          setEvents([`Transfer at block 3990866: ["0x0000000000000000000000000000000000000000","0xC53132eF503aDE3a1cD163a975b4E83d79F94145","11"]`]);
         }
-  
+ 
         setLastBlockChecked(latestBlock)
         setError(null)
       } catch (err) {

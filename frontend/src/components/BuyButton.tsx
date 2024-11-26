@@ -2,23 +2,22 @@
 
 import { useState } from 'react'
 import { Button } from '@mui/material';
-import { ethers } from 'ethers';
+import { ethers, ContractTransactionReceipt } from 'ethers';
 import tokenABI from "./abi.json";
 import productABI from "./nft_abi.json";
 import address from "./address.json";
 
+
+
 interface BuyButtonProps {
   productId: number;
   price: number;
-  tokenURI : string;
-  // tokenURI: {
-  //   name: string,
-  //   image: string,
-  //   description: string,
-  //   attributes: list
-  // };
+  tokenURI: string;
   onPurchase: () => void;
 }
+
+
+
 
 export default function BuyButton({ productId, price, tokenURI, onPurchase }: BuyButtonProps) {
   const [isPurchased, setIsPurchased] = useState(false);
@@ -28,10 +27,10 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
     setIsProcessing(true);
     try {
       // Connect to MetaMask
-      await window.ethereum.request({ method: 'eth_requestAccounts' });
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
 
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
+      const provider = new ethers.BrowserProvider(window.ethereum)
+      const signer = await provider.getSigner()
       
       // Contract addresses (replace with actual addresses)
       const tokenContractAddress = address.WalkTokenAddress;
@@ -43,19 +42,33 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
 
       // Get user's address
       const userAddress = await signer.getAddress();
-
+      
       // Call burnTokens function
       const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
       await burnTx.wait();
       
       // Call mintProduct function
       const mintTx = await productContract.mintProduct(userAddress, tokenURI);
-      await mintTx.wait();
+      const receipt = await mintTx.wait();
 
       alert(`Purchased product ${productId}`);
       setIsPurchased(true);
       onPurchase(); // Call the onPurchase callback
-      
+      if(receipt instanceof ContractTransactionReceipt ){
+        fetch('/api/minted', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            url: tokenURI,
+            id: ['1000001', ""]
+          }),
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch((error) => console.error('Error:', error));
+      }
     } catch (error) {
       console.error("Error during purchase:", error);
       alert("You don't have enough Walk Token");
