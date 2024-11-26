@@ -21,12 +21,6 @@ import {useState} from 'react';
     const { sdk, signIn, signOut } = useWallet();
 
     const{ balance, error } = useBalance("ethereum")
-    // const { balance } = useSplWalletBalance(
-    //   "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
-    // );
-    // const getContractMethods = (abi: any) => {
-    //   return abi.filter((method: any) => method.type === "function");
-    // };
   
     // /**
     //  * Get list of parameters for a method

@@ -1,0 +1,19 @@
+{
+  "name": "My Awesome NFT",
+  "description": "This is a unique digital asset representing...",
+  "image": "https://bafybeigdieasohussnshfvoz4oas6k3p4yfhr76nggcsp6vzcx3wgtflpy.ipfs.w3s.link/12.jpg",
+  "attributes": [
+    {
+      "trait_type": "Background",
+      "value": "Blue"
+    },
+    {
+      "trait_type": "Eyes",
+      "value": "Green"
+    },
+    {
+      "trait_type": "Mouth",
+      "value": "Smile"
+    }
+  ]
+}
