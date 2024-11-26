@@ -1,5 +1,4 @@
 import { Card, CardContent, Typography, Box, styled, Button } from '@mui/material';
-import { HelpCircle } from "lucide-react"
 import {
     AvailableProvider,
     useAddresses,
@@ -13,9 +12,15 @@ import CustomGlowingButton from './glowing-button';
 import CircularImage from './circular-image';
 import abi from "./abi.json";
 import address from "./address.json";
+import { HoverTextIconCSS } from './ui/hover-circle';
+
 
 
 const contract = address.WalkTokenAddress;
+
+interface TokenSectionProps {
+  helpText?: string
+}
 
 const TransparentCard = styled(Card)(({ theme }) => ({
     backgroundColor: 'rgba(13, 17, 37, 0.8)',
@@ -47,7 +52,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     contract: string;
   }
   
-  const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({}, ref) => {
+  const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({helpText="1000 step = 1 WLK"}, ref) => {
     const { sdk, signIn, signOut } = useWallet();
     const { balance, error } = useBalance(
         "ethereum"
@@ -151,7 +156,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                 <Typography variant="subtitle1" component="h2">
                   Dream to Earn Token Crowdsale
                 </Typography>
-                <HelpCircle style={{ color: 'gray', width: 20, height: 20 }} />
+                <HoverTextIconCSS text={helpText} />
               </Box>
   
                  {/* Illustration with Overlaid Text */}

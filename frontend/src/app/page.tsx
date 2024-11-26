@@ -8,6 +8,8 @@ import Navbar from "@/components/nav-bar";
 import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
 import TokenSection from "@/components/token-section";
+import ERC20EventListener from "@/components/event-listener";
+
 import { useRef } from 'react';
 
 
@@ -43,11 +45,13 @@ export default function Home() {
        <Navbar scrollToTokenSection={scrollToTokenSection} />
        <HeroSection scrollToTokenSection={scrollToTokenSection} />
       {/* <PartnersSection /> */}
+      {/* <TokenSection helpText="This section displays your token information and allows you to sign in or out." /> */}
       <TokenSection 
         ref={tokenSectionRef}
         sdk={{}} 
         abi={{}} 
         contract="" 
+        helpText="1000 steps = 1 WLK"
       />
       <div/>
               <h1 className="text-3xl font-bold mb-8 text-center">Your Own NFTs</h1>
@@ -60,6 +64,7 @@ export default function Home() {
       </main>
 
     <div>
+      <ERC20EventListener />
       <InteractContract />
     </div>
     <div>

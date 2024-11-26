@@ -11,7 +11,8 @@ import {useState} from 'react';
 import address from "./address.json";
 
 
-  const contract = address.WalkTokenAddress;
+const contract = address.WalkTokenAddress;
+
   
   /**
    * This component allows user to upload a contract and interact with it.
