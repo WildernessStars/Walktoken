@@ -2,20 +2,19 @@
 
 import { useState } from 'react'
 import { Button } from '@mui/material';
-import { ethers, JsonRpcProvider } from 'ethers';
+import { ethers } from 'ethers';
 import tokenABI from "./abi.json";
 import productABI from "./nft_abi.json";
 import address from "./address.json";
-
-// import { MetaMaskInpageProvider } from '@metamask/providers';
 
 interface BuyButtonProps {
   productId: number;
   price: number;
   tokenURI: string;
+  onPurchase: () => void;
 }
 
-export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps) {
+export default function BuyButton({ productId, price, tokenURI, onPurchase }: BuyButtonProps) {
   const [isPurchased, setIsPurchased] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -43,12 +42,13 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
       const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
       await burnTx.wait();
       
-      // // Call mintProduct function
+      // Call mintProduct function
       const mintTx = await productContract.mintProduct(userAddress, tokenURI);
       await mintTx.wait();
 
       alert(`Purchased product ${productId}`);
       setIsPurchased(true);
+      onPurchase(); // Call the onPurchase callback
       
     } catch (error) {
       console.error("Error during purchase:", error);
@@ -64,3 +64,4 @@ export default function BuyButton({ productId, price, tokenURI }: BuyButtonProps
     </Button>
   );
 }
+

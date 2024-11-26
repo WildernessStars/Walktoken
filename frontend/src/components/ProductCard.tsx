@@ -1,15 +1,19 @@
 import Image from 'next/image'
-import { Card, CardContent, CardHeader } from '@mui/material';
+import { Card, CardContent } from '@mui/material';
 import BuyButton from './BuyButton'
 import { Product } from '@/lib/products'
+import DiagonalLine from './DiagonalLine'
+import { useState } from 'react'
 
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const [isPurchased, setIsPurchased] = useState(false);
+
   return (
-    <Card className="w-full max-w-sm">
+    <Card className={`w-full max-w-sm relative ${isPurchased ? 'opacity-50' : ''}`}>
       <CardContent className="p-4">
         <div className="aspect-square relative mb-4">
           <Image
@@ -18,6 +22,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             fill
             className="object-cover rounded-md"
           />
+          {isPurchased && <DiagonalLine />}
         </div>
         <div className="flex justify-between items-center">
           <div>
@@ -27,7 +32,8 @@ export default function ProductCard({ product }: ProductCardProps) {
           <BuyButton 
             productId={product.id} 
             price={product.price} 
-            tokenURI={`https://example.com/metadata/${product.id}`} 
+            tokenURI={`https://example.com/metadata/${product.id}`}
+            onPurchase={() => setIsPurchased(true)}
           />
         </div>
       </CardContent>
