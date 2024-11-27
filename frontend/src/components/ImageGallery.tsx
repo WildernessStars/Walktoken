@@ -5,6 +5,7 @@ import { styled } from '@mui/system';
 import { ethers } from 'ethers';
 import productABI from "./nft_abi.json";
 import Caddress from "./address.json";
+import { products, Product } from "../lib/products";
 
 const ScrollArea = styled('div')({
   overflowX: 'auto',
@@ -44,6 +45,11 @@ const RightGradient = styled(GradientOverlay)({
   background: 'linear-gradient(to left, white, transparent)',
 });
 
+interface MintedNFT {
+  tokenURI: string;
+  tokenId: string[];
+}
+
 export default function ImageGallery() {
   const [nfts, setNfts] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,17 +65,23 @@ export default function ImageGallery() {
 
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
-
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
-        console.log(address)
         const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
-        console.log(contract)
         const tokenIds = await contract.getAllNFTs(address);
-        console.log(tokenIds)
-        
-        const imageUrls = tokenIds.map((id: number) => `/api/nft-image/${id}`);
+
+        const response = await fetch('http://localhost:3000/api/minted');
+        const mintedNFTs: MintedNFT[] = await response.json();
+        const imageUrls = await Promise.all(tokenIds.map(async (id: ethers.BigNumber) => {
+          const token_id = id.toString();
+          const matchedNFT = mintedNFTs.find(nft => nft.tokenId[0] === token_id);
+          if (matchedNFT) {
+            const matchedProduct = products.find(product => product.tokenURI === matchedNFT.tokenURI);
+            return matchedProduct ? matchedProduct.image : '';
+          }
+          return '';
+        }));
         setNfts(imageUrls);
       } catch (error) {
         console.error("Failed to connect wallet or fetch NFTs:", error);
