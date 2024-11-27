@@ -10,6 +10,7 @@ import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
 import TokenSection from "@/components/token-section";
 import ERC20EventListener from "@/components/event-listener";
+import ValueProposition from "@/components/va"
 
 import { useRef } from 'react';
 
@@ -43,10 +44,10 @@ export default function Home() {
 
       <div>
         <ERC20EventListener />
-        <InteractContract />
       </div>
+
       <div>
-        <TokenMint />
+        <ValueProposition />
       </div>
     </div>
   );

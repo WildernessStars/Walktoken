@@ -89,23 +89,21 @@ export default function EventListener({}: EventListenerProps) {
     return (
       <div className="w-full max-w-2xl">
         <div>
-          <div>{eventName} Events</div>
+          
         </div>
         <div>
           <div className="mb-4 flex items-center justify-between">
-            <Button onClick={togglePolling} variant={isPolling ? "outlined" : "outlined"}>
+          <Button onClick={togglePolling} variant={isPolling ? "outlined" : "outlined"} style={{ display:  "none" }}>
               {isPolling ? "Stop Polling" : "Start Polling"}
             </Button>
-            <span className="text-sm text-muted-foreground">
-              {lastBlockChecked ? `Last checked block: ${lastBlockChecked}` : 'Not started'}
-            </span>
+            
           </div>
           {error && (
             <div className="mb-4 p-3 bg-destructive/15 text-destructive rounded-md" role="alert">
               {error}
             </div>
           )}
-          <div className="space-y-2 max-h-96 overflow-auto">
+          {/* <div className="space-y-2 max-h-96 overflow-auto">
             {events.length === 0 ? (
               <p className="text-center text-muted-foreground">No events found yet.</p>
             ) : (
@@ -115,7 +113,7 @@ export default function EventListener({}: EventListenerProps) {
                 </div>
               ))
             )}
-          </div>
+          </div> */}
         </div>
         {/* {newEvents.map((event, index) => (
         <Toast key={`${lastBlockChecked}-${index}`} message={event} />
