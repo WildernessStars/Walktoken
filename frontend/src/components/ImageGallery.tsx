@@ -68,21 +68,14 @@ export default function ImageGallery() {
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
       const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
-      const tokenIds = await contract.getAllNFTs(address);
+      const tokenURIs = await contract.getTokenURIs(address);
 
-      const response = await fetch('http://localhost:3000/api/minted');
-      const mintedNFTs: MintedNFT[] = await response.json();
-          
-      const imageUrls = await Promise.all(tokenIds.map(async (id: ethers.BigNumber) => {
-        const token_id = parseInt(id.toString()) - 1;
-        if (mintedNFTs) {
-          const tokenURI = mintedNFTs[token_id].tokenURI;
-          const matchedProduct = products.find(product => product.tokenURI === tokenURI);
-          return matchedProduct ? matchedProduct.image : '';
-        }
-        return '';
-      }));
-      setNfts(imageUrls);
+      console.log("tokenIds:", tokenURIs)
+      const matchedImages = tokenURIs.map((uri: string) => {
+        const matchedProduct = products.find(product => product.tokenURI === uri);
+        return matchedProduct ? matchedProduct.image : null;
+      });
+      setNfts(matchedImages);
     } catch (error) {
       console.error("Failed to connect wallet or fetch NFTs:", error);
       setError('Failed to fetch NFTs. Please try again.');
