@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-// import "hardhat/console.sol";
-
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -19,6 +17,14 @@ contract WalkToken is ERC20, Ownable {
 
     // Mapping to store the last mint day for each address
     mapping(address => uint256) private _lastMintedDay;
+
+    // Variables for quest functionality
+    uint256 private date; // Records current date
+    uint256 private steps; // Records a unit
+
+    // Mapping to store quest data per user
+    mapping(address => uint256) private userQuestDate; // Tracks the date user got the quest
+    mapping(address => bool) private hasDoneQuestToday; // Tracks if user has completed the quest today
 
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
@@ -39,34 +45,39 @@ contract WalkToken is ERC20, Ownable {
     /**
      * @dev Mint tokens based on steps walked.
      * Each address can only receive tokens once per day.
+     * If the user has an active quest, they receive double tokens.
      * @param to The address to receive the tokens.
-     * @param steps The number of steps walked.
+     * @param stepsWalked The number of steps walked.
      */
-    function mintTokens(address to, uint256 steps) external {
+    function mintTokens(address to, uint256 stepsWalked) external {
         uint256 currentDay = block.timestamp / 1 days;
 
         // Ensure the address hasn't received tokens today
         require(_lastMintedDay[to] < currentDay, "Address can only receive tokens once per day");
 
-        uint256 tokensToMint = stepsToTokens(steps);
+        uint256 tokensToMint = stepsToTokens(stepsWalked);
         require(tokensToMint > 0, "Not enough steps");
         require(totalSupply() + tokensToMint <= _totalSupplyCap, "Total supply cap exceeded");
 
         // Update the last mint day for the address
         _lastMintedDay[to] = currentDay;
 
-        _mint(to, tokensToMint);
+        // Check if user has an active quest and mint double tokens if so
+        if (currentDay == date && hasDoneQuest(to)) {
+            _mint(to, 2 * tokensToMint);
+        } else {
+            _mint(to, tokensToMint);
+        }
     }
-
 
     /**
      * @dev Convert steps to tokens. Each step gives 0.001 tokens.
-     * @param steps The number of steps walked.
+     * @param stepsWalked The number of steps walked.
      * @return The number of tokens to mint (in atomic units).
      */
-    function stepsToTokens(uint256 steps) public pure returns (uint256) {
+    function stepsToTokens(uint256 stepsWalked) public pure returns (uint256) {
         // Since each step gives 0.001 tokens, and decimals is 3, each step gives 1 atomic unit
-        return steps;
+        return stepsWalked;
     }
 
     /**
@@ -76,7 +87,7 @@ contract WalkToken is ERC20, Ownable {
     function getUnissuedTokens() public view returns (uint256) {
         return _totalSupplyCap - totalSupply();
     }
-    
+
     /**
      * @dev Burn tokens from a specified address.
      * @param from The address from which the tokens will be burned.
@@ -84,5 +95,55 @@ contract WalkToken is ERC20, Ownable {
      */
     function burnTokens(address from, uint256 amount) external {
         _burn(from, amount);
+    }
+
+    /**
+     * @dev Finish the quest for a user.
+     * @param _address The address of the user who finished the quest.
+     */
+    function finishQuest(address _address) public {
+        hasDoneQuestToday[_address] = true;
+    }
+
+    /**
+     * @dev Get a quest for a user.
+     * If it's a new day, update the date and steps, and reset user quests.
+     * @param _address The address of the user requesting the quest.
+     * @return The steps required to complete the quest.
+     */
+    function takeQuest(address _address) public returns (uint256) {
+        uint256 currentDate = block.timestamp / 1 days;
+
+        if (currentDate != date) {
+            date = currentDate;
+            // Generate a random number between 15000 and 20000 using date as seed
+            steps = 15000 + (uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), date))) % 5001);
+        }
+
+        if (userQuestDate[_address] != currentDate) {
+            userQuestDate[_address] = currentDate;
+            hasDoneQuestToday[_address] = false;
+        }
+
+        return steps;
+    }
+
+    /**
+     * @dev Check if a user has completed the quest today.
+     * @param _address The address of the user.
+     * @return True if the user has completed the quest today, false otherwise.
+     */
+    function hasDoneQuest(address _address) public view returns (bool) {
+        return hasDoneQuestToday[_address];
+    }
+
+    /**
+     * @dev Check if a user has a quest today.
+     * @param _address The address of the user.
+     * @return True if the user has a quest today, false otherwise.
+     */
+    function hasQuest(address _address) public view returns (bool) {
+        uint256 currentDate = block.timestamp / 1 days;
+        return userQuestDate[_address] == currentDate;
     }
 }
