@@ -74,10 +74,12 @@ export default function ImageGallery() {
         const response = await fetch('http://localhost:3000/api/minted');
         const mintedNFTs: MintedNFT[] = await response.json();
         const imageUrls = await Promise.all(tokenIds.map(async (id: ethers.BigNumber) => {
-          const token_id = id.toString();
-          const matchedNFT = mintedNFTs.find(nft => nft.tokenId[0] === token_id);
-          if (matchedNFT) {
-            const matchedProduct = products.find(product => product.tokenURI === matchedNFT.tokenURI);
+          const token_id = parseInt(id.toString()) - 1;
+          console.log(token_id)
+          console.log(mintedNFTs)
+          if (mintedNFTs) {
+            const tokenURI = mintedNFTs[token_id].tokenURI;
+            const matchedProduct = products.find(product => product.tokenURI === tokenURI);
             return matchedProduct ? matchedProduct.image : '';
           }
           return '';

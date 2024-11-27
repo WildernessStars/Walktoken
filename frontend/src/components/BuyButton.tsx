@@ -62,7 +62,7 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
           },
           body: JSON.stringify({
             url: tokenURI,
-            id: ['1000001', ""]
+            id: ['1', ""]
           }),
         })
         .then(response => response.json())

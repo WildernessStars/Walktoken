@@ -8,9 +8,9 @@ export async function GET() {
     const fileContent = await fs.readFile(filePath, 'utf8');
     const nftData = JSON.parse(fileContent);
     
-    const formattedData = Object.entries(nftData).map(([tokenURI, tokenId]) => ({
+    const formattedData = Object.entries(nftData).map(([tokenURI, unused]) => ({
       tokenURI,
-      tokenId,
+      unused
     }));
     
     return NextResponse.json(formattedData);
