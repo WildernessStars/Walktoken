@@ -1,5 +1,5 @@
 "use client";
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import InteractContract from "@/components/interact-contract";
 import { WalletConnect } from "@/components/wallet-connect";
 import TokenMint from "@/components/token-mint";
@@ -9,8 +9,9 @@ import Navbar from "@/components/nav-bar";
 import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
 import TokenSection from "@/components/token-section";
+import ValueProposition from "@/components/value-proposition"
 import ERC20EventListener from "@/components/event-listener";
-import ValueProposition from "@/components/va"
+
 
 import { useRef } from 'react';
 
@@ -41,14 +42,16 @@ export default function Home() {
          </div>
          <ProductGrid />
        </main>
-
       <div>
         <ERC20EventListener />
       </div>
-
       <div>
         <ValueProposition />
       </div>
     </div>
+    <div>
+      <ValueProposition />
+    </div>
+       </div>
   );
 }

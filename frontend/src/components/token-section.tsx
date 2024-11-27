@@ -176,7 +176,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
               {/* Header */}
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="subtitle1" component="h2">
-                  Dream to Earn Token Crowdsale
+                  Stide to Earn Token
                 </Typography>
                 <HoverTextIconCSS text={helpText} />
               </Box>
