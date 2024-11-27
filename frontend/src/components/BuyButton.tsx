@@ -33,7 +33,10 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
         const data: MintedToken[] = await response.json();
         if (Array.isArray(data)) {
           const isMinted = data.some(item => item.tokenURI === tokenURI);
-          setIsPurchased(isMinted);
+          if (isMinted) {
+            setIsPurchased(true);
+            onPurchase(); // Call the onPurchase callback
+          }
         }
       } catch (error) {
         console.error("Error checking if minted:", error);
@@ -41,7 +44,7 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
     };
 
     checkIfMinted();
-  }, [tokenURI]);
+  }, [tokenURI, onPurchase]);
 
   const handleBuy = async () => {
     setIsProcessing(true);
@@ -98,7 +101,14 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
   };
 
   return (
-    <Button onClick={handleBuy} disabled={isPurchased || isProcessing}>
+    <Button 
+      onClick={handleBuy} 
+      disabled={isPurchased || isProcessing}
+      style={{
+        backgroundColor: isPurchased ? 'gray' : '',
+        color: isPurchased ? 'white' : '',
+      }}
+    >
       {isProcessing ? 'Processing...' : isPurchased ? 'Sold!' : 'Buy Now'}
     </Button>
   );
