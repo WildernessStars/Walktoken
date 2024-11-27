@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { Card, CardContent } from '@mui/material'
-import hiking1Image from "../../public/image/1.jpg"
-import hiking2Image from "../../public/image/2.jpg"
+import hiking1Image from "../../public/image/Hiking1.jpg"
+import hiking2Image from "../../public/image/Hiking2.jpg"
 
 interface ValueCardProps {
   title: string
