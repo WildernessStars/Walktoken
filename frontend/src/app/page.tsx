@@ -13,7 +13,6 @@ import ValueProposition from "@/components/value-proposition"
 import ERC20EventListener from "@/components/event-listener";
 
 
-import { useRef } from 'react';
 
 export default function Home() {
   const tokenSectionRef = useRef<HTMLDivElement>(null);
@@ -49,9 +48,5 @@ export default function Home() {
         <ValueProposition />
       </div>
     </div>
-    <div>
-      <ValueProposition />
-    </div>
-       </div>
   );
 }
