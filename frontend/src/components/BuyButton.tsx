@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import { Button } from '@mui/material';
 import { ethers, ContractTransactionReceipt } from 'ethers';
 import tokenABI from "./abi.json";
@@ -16,12 +16,32 @@ interface BuyButtonProps {
   onPurchase: () => void;
 }
 
-
+interface MintedToken {
+  tokenURI: string;
+  unused: string[];
+}
 
 
 export default function BuyButton({ productId, price, tokenURI, onPurchase }: BuyButtonProps) {
   const [isPurchased, setIsPurchased] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  useEffect(() => {
+    const checkIfMinted = async () => {
+      try {
+        const response = await fetch('/api/minted');
+        const data: MintedToken[] = await response.json();
+        if (Array.isArray(data)) {
+          const isMinted = data.some(item => item.tokenURI === tokenURI);
+          setIsPurchased(isMinted);
+        }
+      } catch (error) {
+        console.error("Error checking if minted:", error);
+      }
+    };
+
+    checkIfMinted();
+  }, [tokenURI]);
 
   const handleBuy = async () => {
     setIsProcessing(true);
