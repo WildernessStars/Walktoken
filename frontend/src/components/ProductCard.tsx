@@ -32,7 +32,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <BuyButton 
             productId={product.id} 
             price={product.price} 
-            tokenURI={`https://example.com/metadata/${product.id}`}
+            tokenURI={product.tokenURI}
             onPurchase={() => setIsPurchased(true)}
           />
         </div>
