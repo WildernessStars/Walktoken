@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Box, styled, Button } from '@mui/material';
+import { Card, CardContent, Typography, Box, styled, Button, LinearProgress } from '@mui/material';
 import {
     AvailableProvider,
     useAddresses,
@@ -7,7 +7,7 @@ import {
   } from "web3-connect-react";
 import { JsonRpcProvider, ethers } from "ethers";
 import { useState,useEffect, forwardRef } from "react"
-import { LogOut, Wallet } from "lucide-react";
+import { LogOut, Wallet, Coins } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
 import CircularImage from './circular-image';
 import abi from "./abi.json";
@@ -52,6 +52,28 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     contract: string;
   }
   
+const MintButton = styled(Button)(({ theme }) => ({
+  position: 'absolute',
+  bottom: '16px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  minWidth: '160px',
+  padding: '8px 24px',
+  borderRadius: '20px',
+  background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+  boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+  color: 'white',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    background: 'linear-gradient(45deg, #1976D2 30%, #00B4E5 90%)',
+    transform: 'translateX(-50%) translateY(-2px)',
+    boxShadow: '0 6px 10px 2px rgba(33, 203, 243, .3)',
+  },
+  '&:disabled': {
+    background: 'linear-gradient(45deg, #9e9e9e 30%, #757575 90%)',
+    color: 'rgba(255,255,255,0.5)',
+  },
+}));
   const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({helpText="1000 step = 1 WLK"}, ref) => {
     const { sdk, signIn, signOut } = useWallet();
     const { balance, error } = useBalance(
@@ -61,6 +83,11 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     const [currentBalance, setCurrentBalance] = useState('');
     const [notIssued, setNotIssued] = useState('');
     const [mintDone, setMintDone] = useState<string>("notmint");
+    const [stepGoal, setStepGoal] = useState(0);
+    const [currentSteps, setCurrentSteps] = useState(0);
+    const [checkedIn, setCheckedIn] = useState(false);
+    const [takenChallenge, setTakenChallenge] = useState(false);
+  
     
 
     // const router = useRouter();
@@ -105,6 +132,27 @@ const TransparentCard = styled(Card)(({ theme }) => ({
           console.error("Error fetching unissued tokens:", error);
           setNotIssued('Error');
         }
+      };
+      const handleStepChallenge = () => {
+        setTakenChallenge(true);
+        const newGoal = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
+        setStepGoal(newGoal);
+        setCurrentSteps(0);
+        // Simulate step progress
+        const interval = setInterval(() => {
+          setCurrentSteps(prev => {
+            if (prev >= newGoal) {
+              clearInterval(interval);
+              return newGoal;
+            }
+            return prev + Math.floor(Math.random() * 100);
+          });
+        }, 1000);
+      };
+    
+      const handleCheckIn = () => {
+        setCheckedIn(true);
+        setTimeout(() => setCheckedIn(false), 24 * 60 * 60 * 1000); // Reset after 24 hours
       };
       function getRandomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -170,7 +218,14 @@ const TransparentCard = styled(Card)(({ theme }) => ({
           }}
         />
         
-        <Box sx={{ maxWidth: '350px', mx: 'auto', px: 2 }}>
+        <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        maxWidth: '1200px', 
+        mx: 'auto', 
+        px: 2,
+        gap: 4
+      }}>
           <TransparentCard>
             <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
               {/* Header */}
@@ -250,7 +305,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                         // sdk.provider?.metadata.name === p.metadata.name;
                         return (
                         
-                            <CustomGlowingButton key="connect" 
+                            <CustomGlowingButton key="connect" color="#011C13" 
                                 onClick={async () => {
                                 if (p.isEnabled(sdk.walletProviders)) {
                                     await handleSignIn(p.metadata.name);
@@ -272,25 +327,125 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                 </div>
 
               <div>
-              {isConnected && (
-                  <Button 
+
+              </div>
+            </CardContent>
+            {isConnected && (
+            <MintButton
+              onClick={getMintToken}
+              startIcon={<Coins className="w-4 h-4" />}
+            >
+              Mint Tokens
+            </MintButton>
+          )}
+            {/* {isConnected && (
+                  <MintButton 
                       variant="outlined" 
                       size="small" 
                       onClick={getMintToken}
                       sx={{ mt: 0 }} // Add margin top for spacing
                   >
                       Mint
-                  </Button>
-              )}
-              {/* Footer Text */}
-              <Typography variant="caption" sx={{ color: 'gray', textAlign: 'center', mt: 2 }}>
-                Walk to Earn Tokens are sold at 200000 WLK / 1 USDT
-              </Typography>
-              </div>
-  
-              
-            </CardContent>
+                  </MintButton>
+              )} */}
           </TransparentCard>
+                  {/* Step Challenge Card */}
+        <TransparentCard sx={{ flex: 1 }}>
+        <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Typography variant="subtitle1" component="h2">
+                Step Challenge
+                </Typography>
+              </Box>
+              <br></br>
+              <br></br>
+              <br></br>
+              <CircularImage 
+                  src="/image/quest.png" 
+                  alt="take quest"
+                  size={290} 
+                />
+              <Typography variant="subtitle1">
+                Goal: {stepGoal} steps
+              </Typography>
+
+              <LinearProgress 
+                variant="determinate" 
+                value={(currentSteps / stepGoal) * 100} 
+                sx={{ 
+                  mt: 2,
+                  height: 10,
+                  borderRadius: 5,
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: '#4CAF50'
+                  }
+                }}
+              />
+              <Typography variant="body2" sx={{ mt: 1 }}>
+                Current: {currentSteps} steps
+              </Typography>
+            <br></br>
+            <br></br>
+            <div className="relative group" key="r">
+               <div className="absolute -inset-0.5 bg-blue-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200 animate-pulse" key="b"></div>
+
+            {/* <Button 
+              variant="contained" 
+              onClick={handleStepChallenge}
+              sx={{
+                backgroundColor: '#2196F3',
+                '&:hover': {
+                  backgroundColor: '#1976D2'
+                }
+              }}
+            >
+              Start New Challenge
+            </Button> */}
+
+            <CustomGlowingButton key="challenge" 
+                                onClick={handleStepChallenge}
+                                color="#1976D2"
+                            >
+                                {isConnected
+                                ? (takenChallenge ? (currentSteps >= stepGoal ? "Done": "In progress")
+                                : "Start New Challenge") : "Start New Challenge"}
+              </CustomGlowingButton>
+            </div>
+          </CardContent>
+        </TransparentCard>
+               {/* Check-in Card */}
+               <TransparentCard sx={{ flex: 1 }}>
+        <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <Typography variant="subtitle1" component="h2">
+                Daily Check-in
+                </Typography>
+              </Box>
+            <br></br> 
+            <div>            
+              <CircularImage 
+                src="/image/hkust.jpg" 
+                alt="Check point"
+                size={290} 
+                object-fit="cover"
+              />
+              </div>          
+            <br></br>                       
+            <br></br>                       
+            <br></br>                       
+
+            <div className="relative group" key="r">
+               <div className="absolute -inset-0.5 bg-[#4b901a] rounded-full opacity-75 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200 animate-pulse" key="b"></div>
+
+            <CustomGlowingButton key="checkin" color="#4b901a"
+              onClick={handleCheckIn}
+            >
+              {checkedIn ? 'Checked In' : 'Check In'}
+            </CustomGlowingButton>
+            </div>
+          </CardContent>
+        </TransparentCard>
         </Box>
         <span><>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</></span>
               {sdk.provider && (

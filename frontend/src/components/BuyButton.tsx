@@ -64,7 +64,7 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
       const userAddress = await signer.getAddress();
       
       // Call burnTokens function
-      const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
+      const burnTx = await tokenContract.burnTokens(userAddress, 1);
       await burnTx.wait();
       
       // Call mintProduct function

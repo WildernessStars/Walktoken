@@ -2,17 +2,17 @@ import React from 'react';
 import { Button, styled } from '@mui/material';
 import { keyframes } from '@emotion/react';
 
-const glowAnimation = keyframes`
+const glowAnimation = (color: string) => keyframes`
   0%, 100% {
-    box-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 15px #00ff00, 0 0 20px #00ff00;
+    box-shadow: 0 0 5px ${color}, 0 0 10px ${color}, 0 0 15px ${color}, 0 0 20px ${color};
   }
   50% {
-    box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00, 0 0 40px #00ff00;
+    box-shadow: 0 0 10px ${color}, 0 0 20px ${color}, 0 0 30px ${color}, 0 0 40px ${color};
   }
 `;
 
-const GlowingButton = styled(Button)(({ theme }) => ({
-  backgroundColor: '#011C13',
+const GlowingButton = styled(Button)<{ customColor: string }>(({ theme, customColor }) => ({
+  backgroundColor: customColor,
   color: 'white',
   padding: '12px 24px',
   fontSize: '1.2rem',
@@ -29,13 +29,13 @@ const GlowingButton = styled(Button)(({ theme }) => ({
     bottom: '-2px',
     background: 'transparent',
     borderRadius: 'inherit',
-    animation: `${glowAnimation} 3s ease-in-out infinite`,
+    animation: `${glowAnimation(customColor)} 3s ease-in-out infinite`,
     zIndex: -1,
   },
   '&:hover': {
     backgroundColor: '#011C13',
     '&::before': {
-      animation: `${glowAnimation} 1.5s ease-in-out infinite`,
+      animation: `${glowAnimation(customColor)} 1.5s ease-in-out infinite`,
     },
   },
 }));
@@ -43,11 +43,12 @@ const GlowingButton = styled(Button)(({ theme }) => ({
 interface Props {
   children: React.ReactNode;
   onClick?: () => void;
+  color?: string;
 }
 
-const CustomGlowingButton: React.FC<Props> = ({ children, onClick }) => {
+const CustomGlowingButton: React.FC<Props> = ({ children, onClick, color = '#00ff00' }) => {
   return (
-    <GlowingButton variant="contained" fullWidth onClick={onClick}>
+    <GlowingButton variant="contained" fullWidth onClick={onClick} customColor={color}>
       {children}
     </GlowingButton>
   );

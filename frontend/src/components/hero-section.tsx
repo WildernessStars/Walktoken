@@ -34,7 +34,7 @@ export default function HeroSection({ scrollToTokenSection }: HeroSectionProps) 
           </div>
           <div className="flex items-center justify-center">
             <Image 
-              src="/image/walkicon1.png" 
+              src="/image/walkicon2.png" 
               alt="Walk to Earn App Interface" 
               width={550} 
               height={400} 

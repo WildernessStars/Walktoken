@@ -11,7 +11,8 @@ const CircularImage: React.FC<CircularImageProps> = ({ src, alt, size }) => {
     <div 
       style={{ 
         width: size-10, 
-        height: size-10 
+        height: size-10,
+        marginLeft: 20
       }} 
       className="relative overflow-hidden rounded-full"
     >
