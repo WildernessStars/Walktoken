@@ -9,7 +9,7 @@ import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
 import TokenSection from "@/components/token-section";
 import { useRef } from 'react';
-
+import ValueProposition from "@/components/value-proposition"
 
 
 // TODO: 获取用户的NFTs
@@ -65,7 +65,10 @@ export default function Home() {
     <div>
       <TokenMint />
     </div>
-   </div>
+    <div>
+      <ValueProposition />
+    </div>
+       </div>
 
   );
 }

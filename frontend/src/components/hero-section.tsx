@@ -17,7 +17,7 @@ export default function HeroSection({ scrollToTokenSection }: HeroSectionProps) 
                 Get rewarded for walking joyfully
               </h1>
               <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                Turn your sleep into a lucrative opportunity. Passively accumulate cryptocurrency rewards as you embrace a restful night&apos;s sleep with Dream to Earn app. Through the power of blockchain technology, your dreams can become a gateway to financial growth.
+              Stride into Wealth: Convert Your Steps into Cryptocurrency with WalkToken. Actively accumulate digital assets as you embrace a healthier lifestyle. Through the synergy of blockchain and wellness, every step you take can lead to financial prosperity.
               </p>
             </div>
             <div className="flex flex-col gap-2 min-[400px]:flex-row">
