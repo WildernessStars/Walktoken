@@ -1,5 +1,4 @@
 import { Card, CardContent, Typography, Box, styled, Button } from '@mui/material';
-import { HelpCircle } from "lucide-react"
 import {
     AvailableProvider,
     useAddresses,
@@ -12,9 +11,16 @@ import { LogOut, Wallet } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
 import CircularImage from './circular-image';
 import abi from "./abi.json";
+import address from "./address.json";
+import { HoverTextIconCSS } from './ui/hover-circle';
 
 
-const contract = "0x5878605A2EedbAB94C5CeA8324fe42B3778adDc7";
+
+const contract = address.WalkTokenAddress;
+
+interface TokenSectionProps {
+  helpText?: string
+}
 
 const TransparentCard = styled(Card)(({ theme }) => ({
     backgroundColor: 'rgba(13, 17, 37, 0.8)',
@@ -23,7 +29,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
     backdropFilter: 'blur(4px)',
     border: '1px solid rgba(255, 255, 255, 0.18)',
-    aspectRatio: '9 / 19',
+    aspectRatio: '9 / 18',
     display: 'flex',
     flexDirection: 'column',
   }));
@@ -46,7 +52,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     contract: string;
   }
   
-  const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({}, ref) => {
+  const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({helpText="1000 step = 1 WLK"}, ref) => {
     const { sdk, signIn, signOut } = useWallet();
     const { balance, error } = useBalance(
         "ethereum"
@@ -54,6 +60,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
     const [isConnected, setIsConnected] = useState(false);
     const [currentBalance, setCurrentBalance] = useState('');
     const [notIssued, setNotIssued] = useState('');
+    const [mintDone, setMintDone] = useState<string>("notmint");
     
 
     // const router = useRouter();
@@ -99,6 +106,27 @@ const TransparentCard = styled(Card)(({ theme }) => ({
           setNotIssued('Error');
         }
       };
+      function getRandomInt(min: number, max: number): number {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+      const getMintToken = async () => {
+        try{
+          const [addresses] = await sdk.getWalletAddress("ethereum");
+          console.log('ree');
+          const result = await sdk.callContractMethod({
+            method: "mintTokens",
+            params: [addresses, getRandomInt(8000, 20000)],
+            abi: abi,
+            contractAddress: contract,
+          });
+          setMintDone(result.toString());
+      } catch (error: any) {
+        console.error(error);
+        alert(error.message);
+      } finally {
+        console.log('mint');
+      }
+    };
 
       useEffect(() => {
         getNotIssued();
@@ -110,7 +138,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
           getBalance();
         }
         getNotIssued();
-      }, [isConnected]);
+      }, [isConnected, mintDone]);
 
     const handleSignIn = async (providerName: AvailableProvider) => {
     await signIn(providerName, {
@@ -150,7 +178,7 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                 <Typography variant="subtitle1" component="h2">
                   Stide to Earn Token
                 </Typography>
-                <HelpCircle style={{ color: 'gray', width: 20, height: 20 }} />
+                <HoverTextIconCSS text={helpText} />
               </Box>
   
                  {/* Illustration with Overlaid Text */}
@@ -242,11 +270,25 @@ const TransparentCard = styled(Card)(({ theme }) => ({
                         );
                     })}
                 </div>
-  
+
+              <div>
+              {isConnected && (
+                  <Button 
+                      variant="outlined" 
+                      size="small" 
+                      onClick={getMintToken}
+                      sx={{ mt: 0 }} // Add margin top for spacing
+                  >
+                      Mint
+                  </Button>
+              )}
               {/* Footer Text */}
               <Typography variant="caption" sx={{ color: 'gray', textAlign: 'center', mt: 2 }}>
                 Walk to Earn Tokens are sold at 200000 WLK / 1 USDT
               </Typography>
+              </div>
+  
+              
             </CardContent>
           </TransparentCard>
         </Box>

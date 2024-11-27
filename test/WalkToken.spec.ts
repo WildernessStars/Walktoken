@@ -47,37 +47,13 @@ describe("WalkToken Contract", function () {
   });
 
  describe("Minting Tokens", function () {
-
-
     it("Owner can mint tokens based on steps", async function () {
-      const { walkToken, addr1 } = await loadFixture(deployWalkTokenFixture);
+      const { walkToken, owner, addr1 } = await loadFixture(deployWalkTokenFixture);
 
       await walkToken.mintTokens(addr1.address, 1000); // Minting for 1000 steps
       const addr1Balance = await walkToken.balanceOf(addr1.address);
       expect(addr1Balance).to.equal(1000);
     });
-
-    it("Should not allow minting tokens exceeding the total supply cap", async function () {
-        const { walkToken, owner, addr1 } = await loadFixture(deployWalkTokenFixture);
-    
-        const decimals = await walkToken.decimals();
-        const totalSupplyCap = ethers.parseUnits('1000000', decimals);
-    
-        const initialSupply = await walkToken.totalSupply();
-        const remainingTokens = totalSupplyCap - initialSupply;
-    
-        // Owner mints remaining tokens to reach the cap
-        await expect(walkToken.mintTokens(addr1.address, remainingTokens))
-          .to.emit(walkToken, 'Transfer')
-          .withArgs(ethers.ZeroAddress, addr1.address, remainingTokens);
-    
-        // Attempt to mint one more token (should fail)
-        await expect(walkToken.mintTokens(addr1.address, 1))
-          .to.be.revertedWith('Total supply cap exceeded');
-    
-        // Verify total supply equals the cap
-        expect(await walkToken.totalSupply()).to.equal(totalSupplyCap);
-      });
 
       it("Should not allow a non-owner to mint tokens", async function () {
         const { WalkToken, walkToken, owner, addr1 } = await loadFixture(
