@@ -19,7 +19,7 @@
     { id: 9, name: "Product 9", price: 99.99, image: "/image/9.jpg?height=200&width=200", tokenURI: "https://bafybeicgsxfrp3aoqbfbcqnofjpa3foeknyywh5j5cyxhafcsivka2indy.ipfs.w3s.link/9.jpg" },
     { id: 10, name: "Product 10", price: 109.99, image: "/image/10.jpg?height=200&width=200", tokenURI: "https://bafybeig2y4s3cvtaeoedpyyadcs56duo24bgl35ohzmavc64mj2kupg7lq.ipfs.w3s.link/10.jpg" },
     { id: 11, name: "Product 1", price: 109.99, image: "/image/11.jpg?height=200&width=200", tokenURI: "https://bafybeifweboj5uam35jl4hqcz357pmhn47h6f54xkz7hhkhdcirezpzbaq.ipfs.w3s.link/11.jpg" },
-    { id: 12, name: "Product 2", price: 129.99, image: "/image/12.jpg?height=200&width=200", tokenURI: "https://bafybeigdieasohussnshfvoz4oas6k3p4yfhr76nggcsp6vzcx3wgtflpy.ipfs.w3s.link/12.jpg" },
+    { id: 12, name: "Product 2", price: 119.99, image: "/image/12.jpg?height=200&width=200", tokenURI: "https://bafybeigdieasohussnshfvoz4oas6k3p4yfhr76nggcsp6vzcx3wgtflpy.ipfs.w3s.link/12.jpg" },
     { id: 13, name: "Product 3", price: 169.99, image: "/image/13.jpg?height=200&width=200", tokenURI: "https://bafybeifpzmh7j6cpop6ksyekkellznm772duvxd57hrtcdoz5uf3ux5n7u.ipfs.w3s.link/13.jpg" },
     { id: 14, name: "Product 4", price: 269.99, image: "/image/14.jpg?height=200&width=200", tokenURI: "https://bafybeif47olwlahhf4v4muzkzku5ke3ktkhzdah3byc433yly2qdl6jgpm.ipfs.w3s.link/14.jpg" },
     { id: 15, name: "Product 5", price: 369.99, image: "/image/15.jpg?height=200&width=200", tokenURI: "https://bafybeiftdgvbmanmahtixg76eqvljqwkhhdxajkviklgdikcjbzqe3sgsq.ipfs.w3s.link/15.jpg" },

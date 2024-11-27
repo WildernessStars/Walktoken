@@ -1,13 +1,11 @@
 'use client'
 
-import { useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@mui/material';
 import { ethers, ContractTransactionReceipt } from 'ethers';
 import tokenABI from "./abi.json";
 import productABI from "./nft_abi.json";
 import address from "./address.json";
-
-
 
 interface BuyButtonProps {
   productId: number;
@@ -20,7 +18,6 @@ interface MintedToken {
   tokenURI: string;
   unused: string[];
 }
-
 
 export default function BuyButton({ productId, price, tokenURI, onPurchase }: BuyButtonProps) {
   const [isPurchased, setIsPurchased] = useState(false);
@@ -89,7 +86,11 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
           }),
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => {
+          console.log(data);
+          // Dispatch a custom event to notify of the purchase
+          window.dispatchEvent(new CustomEvent('nftPurchased'));
+        })
         .catch((error) => console.error('Error:', error));
       }
     } catch (error) {

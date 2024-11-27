@@ -55,45 +55,50 @@ export default function ImageGallery() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchNFTs = async () => {
+    if (typeof window.ethereum === 'undefined') {
+      setError('Please install MetaMask!');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      await window.ethereum.request({ method: 'eth_requestAccounts' })
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
+      const tokenIds = await contract.getAllNFTs(address);
+
+      const response = await fetch('http://localhost:3000/api/minted');
+      const mintedNFTs: MintedNFT[] = await response.json();
+          
+      const imageUrls = await Promise.all(tokenIds.map(async (id: ethers.BigNumber) => {
+        const token_id = parseInt(id.toString()) - 1;
+        if (mintedNFTs) {
+          const tokenURI = mintedNFTs[token_id].tokenURI;
+          const matchedProduct = products.find(product => product.tokenURI === tokenURI);
+          return matchedProduct ? matchedProduct.image : '';
+        }
+        return '';
+      }));
+      setNfts(imageUrls);
+    } catch (error) {
+      console.error("Failed to connect wallet or fetch NFTs:", error);
+      setError('Failed to fetch NFTs. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const connectAndFetchNFTs = async () => {
-      if (typeof window.ethereum === 'undefined') {
-        setError('Please install MetaMask!');
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        await window.ethereum.request({ method: 'eth_requestAccounts' })
-        const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const address = await signer.getAddress();
-        const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
-        const tokenIds = await contract.getAllNFTs(address);
-
-        const response = await fetch('http://localhost:3000/api/minted');
-        const mintedNFTs: MintedNFT[] = await response.json();
-        const imageUrls = await Promise.all(tokenIds.map(async (id: ethers.BigNumber) => {
-          const token_id = parseInt(id.toString()) - 1;
-          console.log(token_id)
-          console.log(mintedNFTs)
-          if (mintedNFTs) {
-            const tokenURI = mintedNFTs[token_id].tokenURI;
-            const matchedProduct = products.find(product => product.tokenURI === tokenURI);
-            return matchedProduct ? matchedProduct.image : '';
-          }
-          return '';
-        }));
-        setNfts(imageUrls);
-      } catch (error) {
-        console.error("Failed to connect wallet or fetch NFTs:", error);
-        setError('Failed to fetch NFTs. Please try again.');
-      } finally {
-        setIsLoading(false);
-      }
+    fetchNFTs();
+    // Add event listener for nftPurchased
+    window.addEventListener('nftPurchased', fetchNFTs);
+    // Cleanup function
+    return () => {
+      window.removeEventListener('nftPurchased', fetchNFTs);
     };
-
-    connectAndFetchNFTs();
   }, []);
 
   if (isLoading) {
@@ -166,3 +171,4 @@ export default function ImageGallery() {
     </Box>
   );
 }
+
