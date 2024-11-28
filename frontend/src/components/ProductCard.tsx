@@ -28,7 +28,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           <div>
             <h3 className="text-lg font-semibold">{product.name}</h3>
             {product.id !== 0 && (
-              <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+              <p className="text-sm text-gray-500">{product.price.toFixed(2)} WLKs</p>
             )}
             {product.id === 0 && (
               <p className="text-sm text-gray-500">Check In Reward</p>
