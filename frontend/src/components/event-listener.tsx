@@ -57,8 +57,6 @@ export default function EventListener({}: EventListenerProps) {
             }
             return updatedEvents;
           })
-        }else{
-          setLatestEvent(`Transfer at block 3990866: ["0x0000000000000000000000000000000000000000","0xC53132eF503aDE3a1cD163a975b4E83d79F94145","11"]`);
         }
  
         setLastBlockChecked(latestBlock)

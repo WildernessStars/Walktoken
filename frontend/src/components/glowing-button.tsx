@@ -11,8 +11,8 @@ const glowAnimation = (color: string) => keyframes`
   }
 `;
 
-const GlowingButton = styled(Button)<{ customColor: string }>(({ theme, customColor }) => ({
-  backgroundColor: customColor,
+const GlowingButton = styled(Button)<{ customcolor: string }>(({ theme, customcolor }) => ({
+  backgroundColor: customcolor,
   color: 'white',
   padding: '12px 24px',
   fontSize: '1.2rem',
@@ -29,13 +29,13 @@ const GlowingButton = styled(Button)<{ customColor: string }>(({ theme, customCo
     bottom: '-2px',
     background: 'transparent',
     borderRadius: 'inherit',
-    animation: `${glowAnimation(customColor)} 3s ease-in-out infinite`,
+    animation: `${glowAnimation(customcolor)} 3s ease-in-out infinite`,
     zIndex: -1,
   },
   '&:hover': {
     backgroundColor: '#011C13',
     '&::before': {
-      animation: `${glowAnimation(customColor)} 1.5s ease-in-out infinite`,
+      animation: `${glowAnimation(customcolor)} 1.5s ease-in-out infinite`,
     },
   },
 }));
@@ -48,7 +48,7 @@ interface Props {
 
 const CustomGlowingButton: React.FC<Props> = ({ children, onClick, color = '#00ff00' }) => {
   return (
-    <GlowingButton variant="contained" fullWidth onClick={onClick} customColor={color}>
+    <GlowingButton variant="contained" fullWidth onClick={onClick} customcolor={color}>
       {children}
     </GlowingButton>
   );
