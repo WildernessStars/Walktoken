@@ -69,8 +69,6 @@ export default function ImageGallery() {
       const address = await signer.getAddress();
       const contract = new ethers.Contract(Caddress.NFTAddress, productABI, signer);
       const tokenURIs = await contract.getTokenURIs(address);
-
-      console.log("tokenIds:", tokenURIs)
       const matchedImages = tokenURIs.map((uri: string) => {
         const matchedProduct = products.find(product => product.tokenURI === uri);
         return matchedProduct ? matchedProduct.image : null;
@@ -94,6 +92,10 @@ export default function ImageGallery() {
     };
   }, []);
 
+  React.useEffect(() => {
+    (window as any).fetchNFTs = fetchNFTs;
+  }, []);
+  
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '200px' }}>

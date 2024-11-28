@@ -6,11 +6,11 @@
     image: string;
     tokenURI: string;
   }
-  
   export const products: Product[] = [
+    { id: 0, name: "WALK HKUST", price: 9999.99, image: "/image/hkust_coin.jpg?height=200&width=200", tokenURI: "https://bafybeids6ag6wxwrut33dzl3velonilr5rm7exq7ju3hlktpv7iua7gbsi.ipfs.w3s.link/hkust_coin.jpg" },
     { id: 1, name: "Product 1", price: 0.99, image: "/image/1.jpg?height=200&width=200", tokenURI: "https://bafybeids6ag6wxwrut33dzl3velonilr5rm7exq7ju3hlktpv7iua7gbsi.ipfs.w3s.link/1.jpg" },
-    { id: 2, name: "Product 2", price: 1.99, image: "/image/2.jpg?height=200&width=200", tokenURI: "https://bafybeihobek5do7h7qx6xa2rshaer5pjqo6sgxyzds4nwbzfjwyp4h4d7a.ipfs.w3s.link/2.jpg" },
-    { id: 3, name: "Product 3", price: 6.99, image: "/image/3.jpg?height=200&width=200", tokenURI: "https://bafybeifx4rfc3zy22ufopwrkgz2b7ippw6atgneeuoebfxw4at3nkqbqse.ipfs.w3s.link/3.jpg" },
+    { id: 2, name: "Product 2", price: 6.99, image: "/image/2.jpg?height=200&width=200", tokenURI: "https://bafybeihobek5do7h7qx6xa2rshaer5pjqo6sgxyzds4nwbzfjwyp4h4d7a.ipfs.w3s.link/2.jpg" },
+    // { id: 3, name: "Product 3", price: 6.99, image: "/image/3.jpg?height=200&width=200", tokenURI: "https://bafybeifx4rfc3zy22ufopwrkgz2b7ippw6atgneeuoebfxw4at3nkqbqse.ipfs.w3s.link/3.jpg" },
     { id: 4, name: "Product 4", price: 9.99, image: "/image/4.jpg?height=200&width=200", tokenURI: "https://bafybeiec3cbyprirup5rdklvhhzhpgvz4iz4xgybahic4qya3mgoes4wgi.ipfs.w3s.link/4.jpg" },
     { id: 5, name: "Product 5", price: 29.99, image: "/image/5.jpg?height=200&width=200", tokenURI: "https://bafybeigilq7ase3ziv45b5uvp6opxa253e2f3p4rjmkbeeyx3wiczqnlhu.ipfs.w3s.link/5.jpg" },
     { id: 6, name: "Product 6", price: 69.99, image: "/image/6.jpg?height=200&width=200", tokenURI: "https://bafybeiapqslkkfh77kuuarh3ea4fcaui6agy6wvpbcmf47746mkjvzlsbq.ipfs.w3s.link/6.jpg" },
