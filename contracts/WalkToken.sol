@@ -19,12 +19,14 @@ contract WalkToken is ERC20, Ownable {
     mapping(address => uint256) private _lastMintedDay;
 
     // Variables for quest functionality
-    uint256 private date; // Records current date
-    uint256 private steps; // Records a unit
+    uint256 private date = block.timestamp / 1 days;
+    uint256 private steps = 15000 + (uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), date))) % 5001);
 
     // Mapping to store quest data per user
     mapping(address => uint256) private userQuestDate; // Tracks the date user got the quest
     mapping(address => bool) private hasDoneQuestToday; // Tracks if user has completed the quest today
+
+    event QuestUpdated(address indexed user, uint256 steps);
 
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
@@ -109,9 +111,8 @@ contract WalkToken is ERC20, Ownable {
      * @dev Get a quest for a user.
      * If it's a new day, update the date and steps, and reset user quests.
      * @param _address The address of the user requesting the quest.
-     * @return The steps required to complete the quest.
      */
-    function takeQuest(address _address) public returns (uint256) {
+    function takeQuest(address _address) public {
         uint256 currentDate = block.timestamp / 1 days;
 
         if (currentDate != date) {
@@ -125,7 +126,7 @@ contract WalkToken is ERC20, Ownable {
             hasDoneQuestToday[_address] = false;
         }
 
-        return steps;
+        emit QuestUpdated(_address, steps);
     }
 
     /**
