@@ -5,7 +5,7 @@ import {
     useBalance,
     useWallet,
   } from "web3-connect-react";
-import { JsonRpcProvider, ethers } from "ethers";
+import { JsonRpcProvider, ethers, BigNumber  } from "ethers";
 import { useState,useEffect, forwardRef } from "react"
 import { LogOut, Wallet, Coins } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
@@ -15,6 +15,7 @@ import address from "./address.json";
 import productABI from "./nft_abi.json";
 import { HoverTextIconCSS } from './ui/hover-circle';
 import { products, Product } from "../lib/products";
+import { BrowserProvider } from 'ethers';
 
 
 
@@ -85,10 +86,11 @@ const MintButton = styled(Button)(({ theme }) => ({
     const [currentBalance, setCurrentBalance] = useState('');
     const [notIssued, setNotIssued] = useState('');
     const [mintDone, setMintDone] = useState<string>("notmint");
-    const [stepGoal, setStepGoal] = useState(0);
+    const [stepGoal, setStepGoal] = useState(1);
     const [currentSteps, setCurrentSteps] = useState(0);
     const [checkedIn, setCheckedIn] = useState(false);
     const [takenChallenge, setTakenChallenge] = useState(false);
+    const [takePending, setTakePending] = useState(false);
   
     
 
@@ -135,22 +137,61 @@ const MintButton = styled(Button)(({ theme }) => ({
           setNotIssued('Error');
         }
       };
-      const handleStepChallenge = () => {
-        setTakenChallenge(true);
-        const newGoal = Math.floor(Math.random() * (10000 - 5000 + 1)) + 5000;
-        setStepGoal(newGoal);
-        setCurrentSteps(0);
-        // Simulate step progress
-        const interval = setInterval(() => {
-          setCurrentSteps(prev => {
-            if (prev >= newGoal) {
-              clearInterval(interval);
-              return newGoal;
-            }
-            return prev + Math.floor(Math.random() * 100);
+  
+      function waitForQuestUpdate(contract: ethers.Contract): Promise<number>  {
+        return new Promise((resolve) => {
+            contract.on("QuestUpdated", (user, steps) => {
+                // console.log(user, steps);
+                resolve(steps); 
+            });
+        });
+    }
+      const handleStepChallenge = async () => {
+        const [address] = await sdk.getWalletAddress("ethereum");
+        if(!takenChallenge){
+          setTakePending(true);
+          setTakenChallenge(true);
+          await window.ethereum.request({method: 'eth_requestAccounts'})
+          const provider = new BrowserProvider(window.ethereum);
+          const signer = await provider.getSigner()
+          const contracti = new ethers.Contract(contract, abi, signer);
+          
+          await contracti.takeQuest(address);
+          let newGoal = await waitForQuestUpdate(contracti)
+          setTakePending(false);
+
+          setStepGoal(Number(newGoal));
+          console.log(stepGoal);
+          setCurrentSteps(20000);
+          // Simulate step progress
+          const interval = setInterval(() => {
+            setCurrentSteps(prev => {
+              if (prev >= newGoal) {
+                clearInterval(interval);
+                return newGoal;
+              }
+              return prev + Math.floor(Math.random() * 100);
+            });
+          }, 1000);
+        }else if(currentSteps >= stepGoal){
+          const result = await sdk.callContractMethod({
+            method: "finishQuest",
+            params: [address],
+            abi: abi,
+            contractAddress: contract,
           });
-        }, 1000);
+          console.log(result);
+          const result2 = await sdk.callContractMethod({
+            method: "balanceOf",
+            params: [address],
+            abi: abi,
+            contractAddress: contract,
+          });
+          const formattedBalance = (Number(result2) / 1000).toFixed(3);
+          setCurrentBalance(formattedBalance);
+        }
       };
+   
     
       const handleCheckIn = async() => {
         try {
@@ -406,7 +447,7 @@ const MintButton = styled(Button)(({ theme }) => ({
 
               <LinearProgress 
                 variant="determinate" 
-                value={(currentSteps / stepGoal) * 100} 
+                value={ (Number(currentSteps) / Number(stepGoal)) * 100} 
                 sx={{ 
                   mt: 2,
                   height: 10,
@@ -443,7 +484,7 @@ const MintButton = styled(Button)(({ theme }) => ({
                                 color="#1976D2"
                             >
                                 {isConnected
-                                ? (takenChallenge ? (currentSteps >= stepGoal ? "Done": "In progress")
+                                ? (takenChallenge ? (takePending ? "Pending": (currentSteps >= stepGoal ? "Done": "In progress"))
                                 : "Start New Challenge") : "Start New Challenge"}
               </CustomGlowingButton>
             </div>
@@ -454,7 +495,7 @@ const MintButton = styled(Button)(({ theme }) => ({
         <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="subtitle1" component="h2">
-                Check-in Quest
+                Daily Check-in
                 </Typography>
               </Box>
             <br></br> 
