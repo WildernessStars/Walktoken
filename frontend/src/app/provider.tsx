@@ -12,10 +12,12 @@ export function Providers({ children }: { children: ReactNode }) {
     walletAddresses: [], 
   });
   useEffect(() => {
+    if (typeof window !== 'undefined') {
     const session = sessionStorage.getItem("session");
     if(session){
       setParsedSession(JSON.parse(session));
     }
+  }
   }, []);
   
 

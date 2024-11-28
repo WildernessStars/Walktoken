@@ -56,14 +56,11 @@ export default function EventListener() {
             }
             return updatedEvents;
           })
-          
         }
- 
         setLastBlockChecked(latestBlock)
         setError(null)
       } catch (err) {
-        console.error('Polling Error:', err)
-        setError(`Polling Error: ${(err as Error).message}`)
+        console.error('Polling Error')
       }
     }, [isPolling, contractAddress, abi, eventName, rpcUrl, lastBlockChecked])
   

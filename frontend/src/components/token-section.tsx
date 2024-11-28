@@ -142,9 +142,9 @@ const MintButton = styled(Button)(({  }) => ({
             const provider = new BrowserProvider(window.ethereum);
             const signer = await provider.getSigner()
             const contracti = new ethers.Contract(contract, abi, signer);
-            
+            const p = waitForQuestUpdate(contracti)
             await contracti.takeQuest(address);
-            const newGoal = await waitForQuestUpdate(contracti)
+            const newGoal = await p;
             setTakePending(false);
 
             setStepGoal(Number(newGoal));
