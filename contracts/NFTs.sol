@@ -73,8 +73,14 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
         return tokens;
     }
 
-    function checkedIn(address _address) public {
-        checkin[_address] = true;
+    function mintCheckInProduct(address to, string memory tokenURI) external returns (uint256) {
+        checkin[to] = true;
+        require(totalMinted < MAX_PRODUCTS, "All products have been minted");
+        uint256 tokenId = totalMinted + 1; // Token IDs start from 1
+        _tokenURIs[tokenId] = tokenURI;
+        _safeMint(to, tokenId);
+        totalMinted++;
+        return tokenId;
     }
 
     function isCheckedIn(address _address) public view returns (bool) {

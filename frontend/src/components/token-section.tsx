@@ -206,9 +206,7 @@ const MintButton = styled(Button)(({ theme }) => ({
           const userAddress = await signer.getAddress();
           const checked = await productContract.isCheckedIn(userAddress);
           if (!checked){
-            const checkTx = await productContract.checkedIn(userAddress);
-            checkTx.wait();
-            const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+            const mintTx = await productContract.mintCheckInProduct(userAddress, tokenURI);
             console.log(tokenURI)
             await mintTx.wait();
             alert(`You got a NFT: WALK HKUST`);

@@ -64,12 +64,7 @@ contract WalkToken is ERC20, Ownable {
         // Update the last mint day for the address
         _lastMintedDay[to] = currentDay;
 
-        // Check if user has an active quest and mint double tokens if so
-        if (currentDay == date && hasDoneQuest(to)) {
-            _mint(to, 2 * tokensToMint);
-        } else {
-            _mint(to, tokensToMint);
-        }
+        _mint(to, tokensToMint);
     }
 
     /**
@@ -105,6 +100,7 @@ contract WalkToken is ERC20, Ownable {
      */
     function finishQuest(address _address) public {
         hasDoneQuestToday[_address] = true;
+        _mint(_address, 10000);
     }
 
     /**

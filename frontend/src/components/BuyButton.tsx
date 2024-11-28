@@ -76,7 +76,7 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
       const mintTx = await productContract.mintProduct(userAddress, tokenURI);
       const receipt = await mintTx.wait();
 
-      alert(`Purchased product ${productId}`);
+      alert(`You purchased a new NFT`);
       setIsPurchased(true);
       onPurchase(); // Call the onPurchase callback
       if(receipt instanceof ContractTransactionReceipt ){
