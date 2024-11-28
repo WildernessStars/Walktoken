@@ -64,7 +64,12 @@ export default function BuyButton({ productId, price, tokenURI, onPurchase }: Bu
       const userAddress = await signer.getAddress();
       
       // Call burnTokens function
-      const burnTx = await tokenContract.burnTokens(userAddress, 1);
+      // tokenContract.on("QuestUpdated", (user, steps) => {
+      //   console.log(`User ${user} updated quest with steps: ${steps.toString()}`);
+      // });
+      // await tokenContract.takeQuest(userAddress);
+
+      const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
       await burnTx.wait();
       
       // Call mintProduct function

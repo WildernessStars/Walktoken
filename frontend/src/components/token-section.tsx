@@ -12,7 +12,9 @@ import CustomGlowingButton from './glowing-button';
 import CircularImage from './circular-image';
 import abi from "./abi.json";
 import address from "./address.json";
+import productABI from "./nft_abi.json";
 import { HoverTextIconCSS } from './ui/hover-circle';
+import { products, Product } from "../lib/products";
 
 
 
@@ -150,10 +152,43 @@ const MintButton = styled(Button)(({ theme }) => ({
         }, 1000);
       };
     
-      const handleCheckIn = () => {
-        setCheckedIn(true);
-        setTimeout(() => setCheckedIn(false), 24 * 60 * 60 * 1000); // Reset after 24 hours
+      const handleCheckIn = async() => {
+        try {
+          const product = products.find(p => p.id === 0);
+          const tokenURI =  product.tokenURI;
+          // const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+          await window.ethereum.request({ method: 'eth_requestAccounts' })
+          const provider = new ethers.BrowserProvider(window.ethereum)
+          const signer = await provider.getSigner()
+          const productContractAddress = address.NFTAddress;
+          const productContract = new ethers.Contract(productContractAddress, productABI, signer);
+          const userAddress = await signer.getAddress();
+          const checked = await productContract.isCheckedIn(userAddress);
+          if (!checked){
+            const checkTx = await productContract.checkedIn(userAddress);
+            checkTx.wait();
+            const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+            console.log(tokenURI)
+            await mintTx.wait();
+            alert(`You got a NFT: WALK HKUST`);
+            setCheckedIn(true);
+            if (typeof (window as any).fetchNFTs === 'function') {
+              (window as any).fetchNFTs();
+            }
+          }else{
+            alert(`You has WALK HKUST already`);
+          }
+        }
+        catch (error) {
+          console.error("Error:", error);
+          alert("You did not get WALK HKUST");
+        }
+
+
+        // setCheckedIn(true);
+        // setTimeout(() => setCheckedIn(false), 24 * 60 * 60 * 1000); // Reset after 24 hours
       };
+
       function getRandomInt(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
       }
@@ -419,7 +454,7 @@ const MintButton = styled(Button)(({ theme }) => ({
         <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="subtitle1" component="h2">
-                Daily Check-in
+                Check-in Quest
                 </Typography>
               </Box>
             <br></br> 

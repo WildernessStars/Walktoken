@@ -8,6 +8,7 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
     uint256 public constant MAX_PRODUCTS = 10000; // Maximum number of unique products
     uint256 public totalMinted; // Tracks the total number of minted NFTs
     mapping(uint256 tokenId => string) public _tokenURIs;
+    mapping(address => bool) private checkin;
 
     // Event emitted when a product is redeemed
     event ProductRedeemed(address indexed redeemer, uint256 indexed tokenId);
@@ -70,5 +71,13 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
             tokens[index] = _tokenURIs[tokenId];
         }
         return tokens;
+    }
+
+    function checkedIn(address _address) public {
+        checkin[_address] = true;
+    }
+
+    function isCheckedIn(address _address) public view returns (bool) {
+        return checkin[_address];
     }
 }

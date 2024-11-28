@@ -27,14 +27,20 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-lg font-semibold">{product.name}</h3>
-            <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+            {product.id !== 0 && (
+              <p className="text-sm text-gray-500">${product.price.toFixed(2)}</p>
+            )}
+            {product.id === 0 && (
+              <p className="text-sm text-gray-500">Check In Reward</p>
+            )}
           </div>
+          {product.id !== 0 && (
           <BuyButton 
             productId={product.id} 
             price={product.price} 
             tokenURI={product.tokenURI}
             onPurchase={() => setIsPurchased(true)}
-          />
+          />)}
         </div>
       </CardContent>
     </Card>
