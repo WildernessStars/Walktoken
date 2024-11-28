@@ -5,65 +5,18 @@ import Typography from '@mui/material/Typography';
 // import { useRouter } from "next/navigation";
 import React from "react";
 import {
-  AvailableProvider,
-  useAddresses,
-  useBalance,
   useWallet,
 } from "web3-connect-react";
-import { LogOut, Wallet } from "lucide-react";
+import { LogOut } from "lucide-react";
 
 
 export function WalletConnect() {
-  const { sdk, signIn, signOut } = useWallet();
-  const { balance, error } = useBalance(
-    "ethereum"
-  );
-  // const router = useRouter();
-  const { addresses, isLoading: isAddressesLoading } = useAddresses(
-    "ethereum"
-  );
+  const { sdk, signOut } = useWallet();
 
   const handleSignOut = async () => {
     await signOut();
   };
 
-  const handleSignIn = async (providerName: AvailableProvider) => {
-    await signIn(providerName, {
-      onSignedIn: async (walletAddress, provider, session) => {
-        sessionStorage.setItem("session", JSON.stringify(session));
-        // router.refresh();
-      },
-      getSignInData: async () => {},
-    });
-  };
-
-  const getChainName = (index: number) => {
-    if (index === 0) {
-      return "ethereum";
-    }
-
-    if (index === 1) {
-      return "solana";
-    }
-
-    if (index === 2) {
-      return "optimism";
-    }
-
-    if (index === 3) {
-      return "polygon";
-    }
-
-    if (index === 4) {
-      return "arbitrum";
-    }
-
-    if (index === 5) {
-      return "bnb";
-    }
-
-    return "solana";
-  };
 
   return (
     <div className="w-full">

@@ -5,7 +5,7 @@ import { styled } from '@mui/system';
 import { ethers } from 'ethers';
 import productABI from "./nft_abi.json";
 import Caddress from "./address.json";
-import { products, Product } from "../lib/products";
+import { products } from "../lib/products";
 
 const ScrollArea = styled('div')({
   overflowX: 'auto',
@@ -45,10 +45,7 @@ const RightGradient = styled(GradientOverlay)({
   background: 'linear-gradient(to left, white, transparent)',
 });
 
-interface MintedNFT {
-  tokenURI: string;
-  tokenId: string[];
-}
+
 
 export default function ImageGallery() {
   const [nfts, setNfts] = useState<string[]>([]);
@@ -93,7 +90,7 @@ export default function ImageGallery() {
   }, []);
 
   React.useEffect(() => {
-    (window as any).fetchNFTs = fetchNFTs;
+    (window as Window).fetchNFTs = fetchNFTs;
   }, []);
   
   if (isLoading) {

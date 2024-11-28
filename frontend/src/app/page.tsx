@@ -1,10 +1,6 @@
 "use client";
-import { useState, useRef } from 'react';
-import InteractContract from "@/components/interact-contract";
-import { WalletConnect } from "@/components/wallet-connect";
-import TokenMint from "@/components/token-mint";
+import { useRef } from 'react';
 import HeroSection from '@/components/hero-section'
-import PartnersSection from '@/components/partner-section'
 import Navbar from "@/components/nav-bar";
 import ProductGrid from '@/components/ProductGrid'
 import ImageGallery from '@/components/ImageGallery'
@@ -28,8 +24,6 @@ export default function Home() {
          <HeroSection scrollToTokenSection={scrollToTokenSection} />
          <TokenSection 
            ref={tokenSectionRef}
-           sdk={{}} 
-           abi={{}} 
            contract="" 
            helpText="1000 steps = 1 WLK"
          />

@@ -1,8 +1,5 @@
 "use client";
 import {
-    useAddresses,
-    useBalance,
-    useSplWalletBalance,
     useWallet,
   } from "web3-connect-react";
   import abi from "./abi.json";
@@ -20,33 +17,15 @@ const contract = address.WalkTokenAddress;
    * @constructor
    */
   export default function InteractContract() {
-    const { sdk, signIn, signOut } = useWallet();
+    const { sdk} = useWallet();
 
-    const{ balance, error } = useBalance("ethereum")
-    // const { balance } = useSplWalletBalance(
-    //   "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
-    // );
-    // const getContractMethods = (abi: any) => {
-    //   return abi.filter((method: any) => method.type === "function");
-    // };
-  
-    // /**
-    //  * Get list of parameters for a method
-    //  * @param abi
-    //  * @param method
-    //  */
-    // const getParams = (abi: any, method: any) => {};
-  
     
     const [currentBalance, setCurrentBalance] = useState<string>("7");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
   
     const getBalance = async () => {
       try{
-        console.log('get');
         const [addresses] = await sdk.getWalletAddress("ethereum");
-        console.log('ree');
         const result = await sdk.callContractMethod({
           method: "balanceOf",
           params: [addresses],
@@ -56,11 +35,13 @@ const contract = address.WalkTokenAddress;
         // console.log(result);
         setCurrentBalance(result.toString());
         console.log('set');
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert(error.message);
+      if(error instanceof Error){
+        alert(error.message);
+      }
     } finally {
-      console.log('ccc');
+      console.log('ok');
     }
   };
     return (

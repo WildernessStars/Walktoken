@@ -1,14 +1,23 @@
 "use client";
 
-import { ReactNode } from "react";
-import { WalletContextProvider } from "web3-connect-react";
+import { ReactNode, useEffect, useState } from "react";
+import { SessionResponse, WalletContextProvider } from "web3-connect-react";
 import {
   MetaMaskProvider,
 } from "web3-connect-react/providers";
 
 export function Providers({ children }: { children: ReactNode }) {
-  const session = sessionStorage.getItem("session");
-  const parsedSession = session ? JSON.parse(session) : { isAuth: false };
+  const  [parsedSession, setParsedSession] = useState<SessionResponse>({
+    isAuth: false,
+    walletAddresses: [], 
+  });
+  useEffect(() => {
+    const session = sessionStorage.getItem("session");
+    if(session){
+      setParsedSession(JSON.parse(session));
+    }
+  }, []);
+  
 
   return (
     <WalletContextProvider

@@ -1,11 +1,9 @@
 import { Card, CardContent, Typography, Box, styled, Button, LinearProgress } from '@mui/material';
 import {
     AvailableProvider,
-    useAddresses,
-    useBalance,
     useWallet,
   } from "web3-connect-react";
-import { JsonRpcProvider, ethers, BigNumber  } from "ethers";
+import { JsonRpcProvider, ethers  } from "ethers";
 import { useState,useEffect, forwardRef } from "react"
 import { LogOut, Wallet, Coins } from "lucide-react";
 import CustomGlowingButton from './glowing-button';
@@ -14,7 +12,7 @@ import abi from "./abi.json";
 import address from "./address.json";
 import productABI from "./nft_abi.json";
 import { HoverTextIconCSS } from './ui/hover-circle';
-import { products, Product } from "../lib/products";
+import { products } from "../lib/products";
 import { BrowserProvider } from 'ethers';
 
 
@@ -50,12 +48,10 @@ const TransparentCard = styled(Card)(({ theme }) => ({
   });
   
   interface TokenSectionProps {
-    sdk: any;
-    abi: any;
     contract: string;
   }
   
-const MintButton = styled(Button)(({ theme }) => ({
+const MintButton = styled(Button)(({  }) => ({
   position: 'absolute',
   bottom: '16px',
   left: '50%',
@@ -79,9 +75,6 @@ const MintButton = styled(Button)(({ theme }) => ({
 }));
   const TokenSection = forwardRef<HTMLDivElement, TokenSectionProps>(({helpText="1000 step = 1 WLK"}, ref) => {
     const { sdk, signIn, signOut } = useWallet();
-    const { balance, error } = useBalance(
-        "ethereum"
-      );
     const [isConnected, setIsConnected] = useState(false);
     const [currentBalance, setCurrentBalance] = useState('');
     const [notIssued, setNotIssued] = useState('');
@@ -92,13 +85,6 @@ const MintButton = styled(Button)(({ theme }) => ({
     const [takenChallenge, setTakenChallenge] = useState(false);
     const [takePending, setTakePending] = useState(false);
   
-    
-
-    // const router = useRouter();
-    const { addresses, isLoading: isAddressesLoading } = useAddresses(
-    "ethereum"
-    );
-
     const handleSignOut = async () => {
     await signOut();
     };
@@ -120,7 +106,7 @@ const MintButton = styled(Button)(({ theme }) => ({
           const formattedBalance = (Number(result) / 1000).toFixed(3);
           setCurrentBalance(formattedBalance);
         } catch (error) {
-          // console.error(error);
+          console.error(error);
           // alert(error);
         }
       };
@@ -148,81 +134,88 @@ const MintButton = styled(Button)(({ theme }) => ({
     }
       const handleStepChallenge = async () => {
         const [address] = await sdk.getWalletAddress("ethereum");
-        if(!takenChallenge){
-          setTakePending(true);
-          setTakenChallenge(true);
-          await window.ethereum.request({method: 'eth_requestAccounts'})
-          const provider = new BrowserProvider(window.ethereum);
-          const signer = await provider.getSigner()
-          const contracti = new ethers.Contract(contract, abi, signer);
-          
-          await contracti.takeQuest(address);
-          let newGoal = await waitForQuestUpdate(contracti)
-          setTakePending(false);
+        if (window.ethereum) {
+          if(!takenChallenge){
+            setTakePending(true);
+            setTakenChallenge(true);
+            await window.ethereum.request({method: 'eth_requestAccounts'})
+            const provider = new BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner()
+            const contracti = new ethers.Contract(contract, abi, signer);
+            
+            await contracti.takeQuest(address);
+            const newGoal = await waitForQuestUpdate(contracti)
+            setTakePending(false);
 
-          setStepGoal(Number(newGoal));
-          console.log(stepGoal);
-          setCurrentSteps(20000);
-          // Simulate step progress
-          const interval = setInterval(() => {
-            setCurrentSteps(prev => {
-              if (prev >= newGoal) {
-                clearInterval(interval);
-                return newGoal;
-              }
-              return prev + Math.floor(Math.random() * 100);
+            setStepGoal(Number(newGoal));
+            console.log(stepGoal);
+            setCurrentSteps(20000);
+            // Simulate step progress
+            const interval = setInterval(() => {
+              setCurrentSteps(prev => {
+                if (prev >= newGoal) {
+                  clearInterval(interval);
+                  return newGoal;
+                }
+                return prev + Math.floor(Math.random() * 100);
+              });
+            }, 1000);
+          }else if(currentSteps >= stepGoal){
+            const result = await sdk.callContractMethod({
+              method: "finishQuest",
+              params: [address],
+              abi: abi,
+              contractAddress: contract,
             });
-          }, 1000);
-        }else if(currentSteps >= stepGoal){
-          const result = await sdk.callContractMethod({
-            method: "finishQuest",
-            params: [address],
-            abi: abi,
-            contractAddress: contract,
-          });
-          console.log(result);
-          const result2 = await sdk.callContractMethod({
-            method: "balanceOf",
-            params: [address],
-            abi: abi,
-            contractAddress: contract,
-          });
-          const formattedBalance = (Number(result2) / 1000).toFixed(3);
-          setCurrentBalance(formattedBalance);
-        }
+            console.log(result);
+            const result2 = await sdk.callContractMethod({
+              method: "balanceOf",
+              params: [address],
+              abi: abi,
+              contractAddress: contract,
+            });
+            const formattedBalance = (Number(result2) / 1000).toFixed(3);
+            setCurrentBalance(formattedBalance);
+          }
+      }
       };
    
     
       const handleCheckIn = async() => {
-        try {
-          const product = products.find(p => p.id === 0);
-          const tokenURI =  product.tokenURI;
-          // const mintTx = await productContract.mintProduct(userAddress, tokenURI);
-          await window.ethereum.request({ method: 'eth_requestAccounts' })
-          const provider = new ethers.BrowserProvider(window.ethereum)
-          const signer = await provider.getSigner()
-          const productContractAddress = address.NFTAddress;
-          const productContract = new ethers.Contract(productContractAddress, productABI, signer);
-          const userAddress = await signer.getAddress();
-          const checked = await productContract.isCheckedIn(userAddress);
-          if (!checked){
-            const mintTx = await productContract.mintCheckInProduct(userAddress, tokenURI);
-            console.log(tokenURI)
-            await mintTx.wait();
-            alert(`You got a NFT: WALK HKUST`);
-            setCheckedIn(true);
-            if (typeof (window as any).fetchNFTs === 'function') {
-              (window as any).fetchNFTs();
+        if (window.ethereum) {
+          try {
+            const product = products.find(p => p.id === 0);
+            if (typeof product != 'undefined'){
+              const tokenURI =  product.tokenURI;
+              // const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+              await window.ethereum.request({ method: 'eth_requestAccounts' })
+              const provider = new ethers.BrowserProvider(window.ethereum)
+              const signer = await provider.getSigner()
+              const productContractAddress = address.NFTAddress;
+              const productContract = new ethers.Contract(productContractAddress, productABI, signer);
+              const userAddress = await signer.getAddress();
+              const checked = await productContract.isCheckedIn(userAddress);
+              if (!checked){
+                const checkTx = await productContract.checkedIn(userAddress);
+                checkTx.wait();
+                const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+                console.log(tokenURI)
+                await mintTx.wait();
+                alert(`You got a NFT: WALK HKUST`);
+                setCheckedIn(true);
+                if (typeof (window as Window).fetchNFTs === 'function' && typeof window !== 'undefined' && window.fetchNFTs) {
+                  window.fetchNFTs();
+                }
+              }else{
+                alert(`You has WALK HKUST already`);
+              }
             }
-          }else{
-            alert(`You has WALK HKUST already`);
           }
-        }
-        catch (error) {
-          console.error("Error:", error);
-          alert("You did not get WALK HKUST");
-        }
-
+          catch (error) {
+            console.error("Error:", error);
+            alert("You did not get WALK HKUST");
+          }
+      }
 
         // setCheckedIn(true);
         // setTimeout(() => setCheckedIn(false), 24 * 60 * 60 * 1000); // Reset after 24 hours
@@ -242,9 +235,9 @@ const MintButton = styled(Button)(({ theme }) => ({
             contractAddress: contract,
           });
           setMintDone(result.toString());
-      } catch (error: any) {
+      } catch (error) {
         console.error(error);
-        alert(error.message);
+        alert("Mint failed");
       } finally {
         console.log('mint');
       }

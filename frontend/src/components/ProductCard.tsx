@@ -36,7 +36,6 @@ export default function ProductCard({ product }: ProductCardProps) {
           </div>
           {product.id !== 0 && (
           <BuyButton 
-            productId={product.id} 
             price={product.price} 
             tokenURI={product.tokenURI}
             onPurchase={() => setIsPurchased(true)}

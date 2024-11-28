@@ -1,8 +1,5 @@
 "use client";
 import {
-    useAddresses,
-    useBalance,
-    useSplWalletBalance,
     useWallet,
   } from "web3-connect-react";
   import abi from "./abi.json";
@@ -19,9 +16,8 @@ import address from "./address.json";
    * @constructor
    */
   export default function TokenMint() {
-    const { sdk, signIn, signOut } = useWallet();
+    const { sdk } = useWallet();
 
-    const{ balance, error } = useBalance("ethereum")
   
     // /**
     //  * Get list of parameters for a method
@@ -32,7 +28,6 @@ import address from "./address.json";
   
     
     const [mintDone, setMintDone] = useState<string>("notmint");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     // const { sdk } = useWallet();
 
     function getRandomInt(min: number, max: number): number {
@@ -50,9 +45,8 @@ import address from "./address.json";
           contractAddress: contract,
         });
         setMintDone(result.toString());
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
-      alert(error.message);
     } finally {
       console.log('mint');
     }

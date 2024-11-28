@@ -10,23 +10,22 @@ const contractAddress = address.NFTAddress;
 const rpcUrl = "https://rpc5.gemini.axiomesh.io/";
 const eventName = "Transfer";
 
-interface EventListenerProps {
-  }
+
 
 // Helper function to safely stringify BigInt values
-const safeStringify = (obj: any): string => {
+const safeStringify = (obj: ethers.Result | string): string => {
   return JSON.stringify(obj, (_, value) =>
     typeof value === 'bigint' ? value.toString() : value
   )
 }
 
-export default function EventListener({}: EventListenerProps) {
+export default function EventListener() {
     const [events, setEvents] = useState<string[]>([])
     const [isPolling, setIsPolling] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [lastBlockChecked, setLastBlockChecked] = useState<number | null>(null)
     const [latestEvent, setLatestEvent] = useState<string | null>(null)
-  
+    console.log(events);
     const pollForEvents = useCallback(async () => {
       if (!isPolling) return
   
@@ -44,7 +43,7 @@ export default function EventListener({}: EventListenerProps) {
         if (logs.length > 0) {
           const newEvents = logs.map(log => {
             const event = contract.interface.parseLog(log)
-            return `${eventName} at block ${log.blockNumber}: ${safeStringify(event.args)}`
+            return `${eventName} at block ${log.blockNumber}: ${safeStringify(event != null ? event.args : "")}`
           })
           setEvents(prevEvents => {
             const updatedEvents = [...prevEvents, ...newEvents];
@@ -57,6 +56,7 @@ export default function EventListener({}: EventListenerProps) {
             }
             return updatedEvents;
           })
+          
         }
  
         setLastBlockChecked(latestBlock)

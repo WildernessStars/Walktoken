@@ -11,7 +11,7 @@ const glowAnimation = (color: string) => keyframes`
   }
 `;
 
-const GlowingButton = styled(Button)<{ customcolor: string }>(({ theme, customcolor }) => ({
+const GlowingButton = styled(Button)<{ customcolor: string }>(({ customcolor }) => ({
   backgroundColor: customcolor,
   color: 'white',
   padding: '12px 24px',
