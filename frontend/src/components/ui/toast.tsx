@@ -10,7 +10,7 @@ const Toast: React.FC<ToastProps> = ({ message }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false);
-      console.log(111);
+      // console.log(111);
     }, 5000);
 
     return () => clearTimeout(timer);

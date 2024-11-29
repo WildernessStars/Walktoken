@@ -148,7 +148,7 @@ const MintButton = styled(Button)(({  }) => ({
             setTakePending(false);
 
             setStepGoal(Number(newGoal));
-            console.log(stepGoal);
+            // console.log(stepGoal);
             setCurrentSteps(20000);
             // Simulate step progress
             const interval = setInterval(() => {
@@ -187,7 +187,6 @@ const MintButton = styled(Button)(({  }) => ({
             const product = products.find(p => p.id === 0);
             if (typeof product != 'undefined'){
               const tokenURI =  product.tokenURI;
-              // const mintTx = await productContract.mintProduct(userAddress, tokenURI);
               await window.ethereum.request({ method: 'eth_requestAccounts' })
               const provider = new ethers.BrowserProvider(window.ethereum)
               const signer = await provider.getSigner()
@@ -197,7 +196,7 @@ const MintButton = styled(Button)(({  }) => ({
               const checked = await productContract.isCheckedIn(userAddress);
               if (!checked){
                 const mintTx = await productContract.mintCheckInProduct(userAddress, tokenURI);
-                console.log(tokenURI)
+                // console.log(tokenURI)
                 await mintTx.wait();
                 alert(`You got a NFT: WALK HKUST`);
                 setCheckedIn(true);
@@ -225,7 +224,7 @@ const MintButton = styled(Button)(({  }) => ({
       const getMintToken = async () => {
         try{
           const [addresses] = await sdk.getWalletAddress("ethereum");
-          console.log('ree');
+          // console.log('ree');
           const result = await sdk.callContractMethod({
             method: "mintTokens",
             params: [addresses, getRandomInt(8000, 20000)],

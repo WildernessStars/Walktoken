@@ -34,7 +34,7 @@ const contract = address.WalkTokenAddress;
         });
         // console.log(result);
         setCurrentBalance(result.toString());
-        console.log('set');
+        // console.log('set');
     } catch (error) {
       console.error(error);
       if(error instanceof Error){

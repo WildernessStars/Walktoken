@@ -37,7 +37,7 @@ import address from "./address.json";
     const getMintToken = async () => {
       try{
         const [addresses] = await sdk.getWalletAddress("ethereum");
-        console.log('ree');
+        // console.log('ree');
         const result = await sdk.callContractMethod({
           method: "mintTokens",
           params: [addresses, getRandomInt(8000, 20000)],
