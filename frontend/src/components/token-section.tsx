@@ -196,9 +196,7 @@ const MintButton = styled(Button)(({  }) => ({
               const userAddress = await signer.getAddress();
               const checked = await productContract.isCheckedIn(userAddress);
               if (!checked){
-                const checkTx = await productContract.checkedIn(userAddress);
-                checkTx.wait();
-                const mintTx = await productContract.mintProduct(userAddress, tokenURI);
+                const mintTx = await productContract.mintCheckInProduct(userAddress, tokenURI);
                 console.log(tokenURI)
                 await mintTx.wait();
                 alert(`You got a NFT: WALK HKUST`);
@@ -421,7 +419,7 @@ const MintButton = styled(Button)(({  }) => ({
         <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="subtitle1" component="h2">
-                Step Challenge
+                Daily Step Challenge
                 </Typography>
               </Box>
               <br></br>
@@ -486,7 +484,7 @@ const MintButton = styled(Button)(({  }) => ({
         <CardContent sx={{ p: 3, display: 'flex', flexDirection: 'column', height: '87%', justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Typography variant="subtitle1" component="h2">
-                Daily Check-in
+                Check-in Quest For Specialized NFT
                 </Typography>
               </Box>
             <br></br> 

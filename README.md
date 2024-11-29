@@ -1,6 +1,10 @@
 # Walktoken
 
-# How to Run Our Project
+Build on server: [https://walktoken-a.vercel.app/](https://walktoken-a.vercel.app/) 
+
+Demo video: [https://www.youtube.com/watch?v=WbGGhPSaE7o](https://www.youtube.com/watch?v=WbGGhPSaE7o)
+
+# How to Run Our Project on localhost
 
 ## Step 1: Clone the Repository
 Clone our repository using the following command:
