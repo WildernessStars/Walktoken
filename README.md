@@ -37,15 +37,19 @@ pnpm run test
 ```
 ## Step 5: Run the GUI
 ### Step 5.1: Navigate to the frontend directory
-### Step 5.2: Install frontend dependencies:
 
 ```bash
 cd frontend
-pnpm i
 ```
-### Step 5.3: Start the development server:
+### Step 5.2: Install frontend dependencies:
 
 ```bash
-pnpm dev
+pnpm i
+```
+### Step 5.3: Build and start the server:
+
+```bash
+pnpm build
+pnpm start
 ```
 ### Step 5.4: Open your browser and go to http://localhost:3000.
