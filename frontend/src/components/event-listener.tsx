@@ -60,7 +60,7 @@ export default function EventListener() {
         setLastBlockChecked(latestBlock)
         setError(null)
       } catch (err) {
-        console.error('Polling Error')
+        console.error('Polling Error', err)
       }
     }, [isPolling, contractAddress, abi, eventName, rpcUrl, lastBlockChecked])
   
