@@ -28,10 +28,16 @@ export default function BuyButton({ price, tokenURI, onPurchase }: BuyButtonProp
   useEffect(() => {
     const checkIfMinted = async () => {
       try {
-        const response = await fetch('/api/minted');
-        const data: MintedToken[] = await response.json();
-        if (Array.isArray(data)) {
-          const isMinted = data.some(item => item.tokenURI === tokenURI);
+        await window.ethereum.request({ method: 'eth_requestAccounts' })
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(address.NFTAddress, productABI, signer);
+        const tokenURIs = await contract.getALLTokenURIs();
+        
+        if (Array.isArray(tokenURIs) && typeof tokenURIs === 'object') {
+          const isMinted = tokenURIs.some(item => {
+            return item === tokenURI;
+          });
           if (isMinted) {
             setIsPurchased(true);
             onPurchase(); // Call the onPurchase callback

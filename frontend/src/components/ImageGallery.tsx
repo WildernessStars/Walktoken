@@ -80,21 +80,17 @@ export default function ImageGallery() {
   };
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      fetchNFTs();
-      // Add event listener for nftPurchased
-      window.addEventListener('nftPurchased', fetchNFTs);
-      // Cleanup function
-      return () => {
-        window.removeEventListener('nftPurchased', fetchNFTs);
-      };
-    }
+    fetchNFTs();
+    // Add event listener for nftPurchased
+    window.addEventListener('nftPurchased', fetchNFTs);
+    // Cleanup function
+    return () => {
+      window.removeEventListener('nftPurchased', fetchNFTs);
+    };
   }, []);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
-      (window as Window).fetchNFTs = fetchNFTs;
-    }
+    (window as Window).fetchNFTs = fetchNFTs;
   }, []);
   
   if (isLoading) {

@@ -69,6 +69,7 @@ contract UniqueProductNFT is ERC721URIStorage, Ownable {
 
         for (uint256 tokenId = 1; tokenId <= totalMinted; tokenId++) {
             tokens[index] = _tokenURIs[tokenId];
+            index ++;
         }
         return tokens;
     }
