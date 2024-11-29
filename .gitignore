@@ -133,5 +133,4 @@ dist
 .DS_Store
 artifacts
 typechain-types
-pnpm-lock.yaml
 cache
