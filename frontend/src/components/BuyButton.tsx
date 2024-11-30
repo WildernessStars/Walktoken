@@ -13,27 +13,19 @@ interface BuyButtonProps {
   onPurchase: () => void;
 }
 
-interface MintedToken {
-  tokenURI: string;
-  unused: string[];
-}
-
-
-
-
 export default function BuyButton({ price, tokenURI, onPurchase }: BuyButtonProps) {
   const [isPurchased, setIsPurchased] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const checkIfMinted = async () => {
+      if (!window.ethereum) return;
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' })
         const provider = new ethers.BrowserProvider(window.ethereum);
         const signer = await provider.getSigner();
         const contract = new ethers.Contract(address.NFTAddress, productABI, signer);
         const tokenURIs = await contract.getALLTokenURIs();
-        
         if (Array.isArray(tokenURIs) && typeof tokenURIs === 'object') {
           const isMinted = tokenURIs.some(item => {
             return item === tokenURI;
@@ -56,12 +48,12 @@ export default function BuyButton({ price, tokenURI, onPurchase }: BuyButtonProp
     if (window.ethereum) {
       try {
         // Connect to MetaMask
-        
+
         await window.ethereum.request({ method: 'eth_requestAccounts' })
 
         const provider = new ethers.BrowserProvider(window.ethereum)
         const signer = await provider.getSigner()
-        
+
         // Contract addresses (replace with actual addresses)
         const tokenContractAddress = address.WalkTokenAddress;
         const productContractAddress = address.NFTAddress;
@@ -72,7 +64,7 @@ export default function BuyButton({ price, tokenURI, onPurchase }: BuyButtonProp
 
         // Get user's address
         const userAddress = await signer.getAddress();
-        
+
         // Call burnTokens function
         // tokenContract.on("QuestUpdated", (user, steps) => {
         //   console.log(`User ${user} updated quest with steps: ${steps.toString()}`);
@@ -81,45 +73,45 @@ export default function BuyButton({ price, tokenURI, onPurchase }: BuyButtonProp
 
         const burnTx = await tokenContract.burnTokens(userAddress, price * 1000);
         await burnTx.wait();
-        
+
         // Call mintProduct function
         const mintTx = await productContract.mintProduct(userAddress, tokenURI);
         const receipt = await mintTx.wait();
 
-      alert(`You purchased a new NFT`);
-      setIsPurchased(true);
-      onPurchase(); // Call the onPurchase callback
-      if(receipt instanceof ContractTransactionReceipt ){
-        fetch('/api/minted', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            url: tokenURI,
-            id: ['1', ""]
-          }),
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-          // Dispatch a custom event to notify of the purchase
-          window.dispatchEvent(new CustomEvent('nftPurchased'));
-        })
-        .catch((error) => console.error('Error:', error));
+        alert(`You purchased a new NFT`);
+        setIsPurchased(true);
+        onPurchase(); // Call the onPurchase callback
+        if (receipt instanceof ContractTransactionReceipt) {
+          fetch('/api/minted', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              url: tokenURI,
+              id: ['1', ""]
+            }),
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              // Dispatch a custom event to notify of the purchase
+              window.dispatchEvent(new CustomEvent('nftPurchased'));
+            })
+            .catch((error) => console.error('Error:', error));
+        }
+      } catch (error) {
+        console.error("Error during purchase:", error);
+        alert("You don't have enough Walk Token");
+      } finally {
+        setIsProcessing(false);
       }
-    } catch (error) {
-      console.error("Error during purchase:", error);
-      alert("You don't have enough Walk Token");
-    } finally {
-      setIsProcessing(false);
     }
-  }
   };
 
   return (
-    <Button 
-      onClick={handleBuy} 
+    <Button
+      onClick={handleBuy}
       disabled={isPurchased || isProcessing}
       style={{
         backgroundColor: isPurchased ? 'gray' : '',
