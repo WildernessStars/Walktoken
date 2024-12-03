@@ -1,75 +1,114 @@
-// test/WalkToken.test.js
+import { expect } from "chai";
+import { ethers } from "hardhat";
+import { Contract, ContractFactory } from "ethers";
+import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
 
-const { expect } = require("chai");
-const { ethers } = require("hardhat");
-const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
+describe("WalkToken", function () {
+  let WalkToken: ContractFactory;
+  let walkToken: Contract;
+  let owner: SignerWithAddress;
+  let addr1: SignerWithAddress;
+  let addr2: SignerWithAddress;
 
-describe("WalkToken Contract", function () {
-  // Fixture to deploy the contract and set up initial state
-  async function deployWalkTokenFixture() {
-    const [owner, addr1, addr2] = await ethers.getSigners();
-
-    const WalkToken = await ethers.getContractFactory("WalkToken");
-    const walkToken = await WalkToken.deploy();
-
-    await walkToken.waitForDeployment(); // Ensure the contract is fully deployed
-
-    return { walkToken, owner, addr1, addr2 };
-  }
+  beforeEach(async function () {
+    WalkToken = await ethers.getContractFactory("WalkToken");
+    [owner, addr1, addr2] = await ethers.getSigners();
+    walkToken = await WalkToken.deploy();
+    await walkToken.waitForDeployment();
+  });
 
   describe("Deployment", function () {
-    it("Should deploy correctly and set the right owner", async function () {
-      const { walkToken, owner } = await loadFixture(deployWalkTokenFixture);
-
+    it("Should set the right owner", async function () {
       expect(await walkToken.owner()).to.equal(owner.address);
     });
 
-    it("Should have the correct initial total supply", async function () {
-      const { walkToken } = await loadFixture(deployWalkTokenFixture);
-
-      const totalSupply = await walkToken.totalSupply();
-      expect(totalSupply).to.equal(20000); // 20 * 10^3 (custom decimals)
-    });
-
-    it("Owner should have the initial balance", async function () {
-      const { walkToken, owner } = await loadFixture(deployWalkTokenFixture);
-
+    it("Should assign the total supply of tokens to the owner", async function () {
       const ownerBalance = await walkToken.balanceOf(owner.address);
-      expect(ownerBalance).to.equal(20000);
+      expect(await walkToken.totalSupply()).to.equal(ownerBalance);
     });
 
-    it("Should set custom decimals to 3", async function () {
-      const { walkToken } = await loadFixture(deployWalkTokenFixture);
+    it("Should have correct name and symbol", async function () {
+      expect(await walkToken.name()).to.equal("WalkToken");
+      expect(await walkToken.symbol()).to.equal("WLK");
+    });
 
-      const decimals = await walkToken.decimals();
-      expect(decimals).to.equal(3);
+    it("Should have correct decimals", async function () {
+      expect(await walkToken.decimals()).to.equal(3);
     });
   });
 
- describe("Minting Tokens", function () {
-    it("Owner can mint tokens based on steps", async function () {
-      const { walkToken, owner, addr1 } = await loadFixture(deployWalkTokenFixture);
-
-      await walkToken.mintTokens(addr1.address, 1000); // Minting for 1000 steps
-      const addr1Balance = await walkToken.balanceOf(addr1.address);
-      expect(addr1Balance).to.equal(1000);
+  describe("Token minting", function () {
+    it("Should mint correct amount of tokens based on steps", async function () {
+      await walkToken.mintTokens(addr1.address, 1000);
+      expect(await walkToken.balanceOf(addr1.address)).to.equal(1000);
     });
 
-      it("Should not allow a non-owner to mint tokens", async function () {
-        const { WalkToken, walkToken, owner, addr1 } = await loadFixture(
-            deployWalkTokenFixture
-        );
-        await expect(walkToken.connect(owner).mintTokens(owner.address, 0)).to.be.revertedWith("Not enough steps");
-      });
-
+    it("Should not allow minting twice in the same day", async function () {
+      await walkToken.mintTokens(addr1.address, 1000);
+      await expect(walkToken.mintTokens(addr1.address, 1000)).to.be.revertedWith(
+        "Address can only receive tokens once per day"
+      );
     });
 
-  describe("Utility Functions", function () {
-    it("stepsToTokens should convert steps correctly", async function () {
-      const { walkToken } = await loadFixture(deployWalkTokenFixture);
+    it("Should allow minting on different days", async function () {
+      await walkToken.mintTokens(addr1.address, 1000);
+      
+      // Simulate next day
+      await ethers.provider.send("evm_increaseTime", [24 * 60 * 60]);
+      await ethers.provider.send("evm_mine", []);
 
-      const tokens = await walkToken.stepsToTokens(5000);
-      expect(tokens).to.equal(5000);
+      await walkToken.mintTokens(addr1.address, 2000);
+      expect(await walkToken.balanceOf(addr1.address)).to.equal(3000);
+    });
+
+    it("Should not mint if total supply cap is exceeded", async function () {
+      const cap = 1_000_000 * (10 ** 3); // 1,000,000 tokens with 3 decimals
+      await expect(walkToken.mintTokens(addr1.address, cap)).to.be.revertedWith(
+        "Total supply cap exceeded"
+      );
+    });
+  });
+
+  describe("Token burning", function () {
+    it("Should burn tokens correctly", async function () {
+      await walkToken.mintTokens(addr1.address, 1000);
+      await walkToken.burnTokens(addr1.address, 500);
+      expect(await walkToken.balanceOf(addr1.address)).to.equal(500);
+    });
+  });
+
+  describe("Quest system", function () {
+    it("Should allow taking a quest", async function () {
+      await walkToken.takeQuest(addr1.address);
+      expect(await walkToken.hasQuest(addr1.address)).to.be.true;
+    });
+
+    it("Should allow finishing a quest", async function () {
+      await walkToken.takeQuest(addr1.address);
+      await walkToken.finishQuest(addr1.address);
+      expect(await walkToken.hasDoneQuest(addr1.address)).to.be.true;
+    });
+
+    it("Should mint tokens when finishing a quest", async function () {
+      const initialBalance = await walkToken.balanceOf(addr1.address);
+      await walkToken.takeQuest(addr1.address);
+      await walkToken.finishQuest(addr1.address);
+      const finalBalance = await walkToken.balanceOf(addr1.address);
+      expect(finalBalance.sub(initialBalance)).to.equal(10000);
+    });
+  });
+
+  describe("Utility functions", function () {
+    it("Should convert steps to tokens correctly", async function () {
+      expect(await walkToken.stepsToTokens(1000)).to.equal(1000);
+    });
+
+    it("Should return correct unissued tokens", async function () {
+      const initialUnissued = await walkToken.getUnissuedTokens();
+      await walkToken.mintTokens(addr1.address, 1000);
+      const finalUnissued = await walkToken.getUnissuedTokens();
+      expect(initialUnissued.sub(finalUnissued)).to.equal(1000);
     });
   });
 });
+
