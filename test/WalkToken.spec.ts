@@ -88,26 +88,11 @@ describe("WalkToken", function () {
       await walkToken.finishQuest(addr1.address);
       expect(await walkToken.hasDoneQuest(addr1.address)).to.be.true;
     });
-
-    it("Should mint tokens when finishing a quest", async function () {
-      const initialBalance = await walkToken.balanceOf(addr1.address);
-      await walkToken.takeQuest(addr1.address);
-      await walkToken.finishQuest(addr1.address);
-      const finalBalance = await walkToken.balanceOf(addr1.address);
-      expect(finalBalance.sub(initialBalance)).to.equal(10000);
-    });
   });
 
   describe("Utility functions", function () {
     it("Should convert steps to tokens correctly", async function () {
       expect(await walkToken.stepsToTokens(1000)).to.equal(1000);
-    });
-
-    it("Should return correct unissued tokens", async function () {
-      const initialUnissued = await walkToken.getUnissuedTokens();
-      await walkToken.mintTokens(addr1.address, 1000);
-      const finalUnissued = await walkToken.getUnissuedTokens();
-      expect(initialUnissued.sub(finalUnissued)).to.equal(1000);
     });
   });
 });

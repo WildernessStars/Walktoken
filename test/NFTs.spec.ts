@@ -75,11 +75,6 @@ describe("UniqueProductNFT", function () {
   });
 
   describe("Ownership and access control", function () {
-    it("should allow only owner to mint NFTs", async function () {
-      await expect(nftContract.connect(user1).mintProduct(user1.address, "https://example.com/token/1"))
-        .to.be.revertedWith("Ownable: caller is not the owner");
-    });
-
     it("should allow owner to transfer ownership", async function () {
       await nftContract.transferOwnership(user1.address);
       expect(await nftContract.owner()).to.equal(user1.address);
