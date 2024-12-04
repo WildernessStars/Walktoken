@@ -13,14 +13,19 @@ contract WalkToken is ERC20, Ownable {
     uint8 private _customDecimals = 3;
 
     // Total supply cap of 1,000,000 tokens (in atomic units)
-    uint256 private immutable _totalSupplyCap = 1_000_000 * (10 ** uint256(_customDecimals));
+    uint256 private immutable _totalSupplyCap =
+        1_000_000 * (10 ** uint256(_customDecimals));
 
     // Mapping to store the last mint day for each address
     mapping(address => uint256) private _lastMintedDay;
 
     // Variables for quest functionality
     uint256 private date = block.timestamp / 1 days;
-    uint256 private steps = 15000 + (uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), date))) % 5001);
+    uint256 private steps =
+        15000 +
+            (uint256(
+                keccak256(abi.encodePacked(blockhash(block.number - 1), date))
+            ) % 5001);
 
     // Mapping to store quest data per user
     mapping(address => uint256) private userQuestDate; // Tracks the date user got the quest
@@ -31,7 +36,7 @@ contract WalkToken is ERC20, Ownable {
     /**
      * @dev Constructor that gives msg.sender all of existing tokens.
      */
-    constructor() ERC20("WalkToken", "WLK") Ownable(msg.sender){
+    constructor() ERC20("WalkToken", "WLK") Ownable(msg.sender) {
         // Pre-mint 20 tokens to the contract owner
         uint256 initialTokens = 20 * (10 ** uint256(_customDecimals));
         _mint(msg.sender, initialTokens);
@@ -55,11 +60,17 @@ contract WalkToken is ERC20, Ownable {
         uint256 currentDay = block.timestamp / 1 days;
 
         // Ensure the address hasn't received tokens today
-        require(_lastMintedDay[to] < currentDay, "Address can only receive tokens once per day");
+        require(
+            _lastMintedDay[to] < currentDay,
+            "Address can only receive tokens once per day"
+        );
 
         uint256 tokensToMint = stepsToTokens(stepsWalked);
         require(tokensToMint > 0, "Not enough steps");
-        require(totalSupply() + tokensToMint <= _totalSupplyCap, "Total supply cap exceeded");
+        require(
+            totalSupply() + tokensToMint <= _totalSupplyCap,
+            "Total supply cap exceeded"
+        );
 
         // Update the last mint day for the address
         _lastMintedDay[to] = currentDay;
@@ -99,8 +110,10 @@ contract WalkToken is ERC20, Ownable {
      * @param _address The address of the user who finished the quest.
      */
     function finishQuest(address _address) public {
-        hasDoneQuestToday[_address] = true;
-        _mint(_address, 10000);
+        if (!hasDoneQuestToday[_address]) {
+            hasDoneQuestToday[_address] = true;
+            _mint(_address, 10000);
+        }
     }
 
     /**
@@ -114,7 +127,13 @@ contract WalkToken is ERC20, Ownable {
         if (currentDate != date) {
             date = currentDate;
             // Generate a random number between 15000 and 20000 using date as seed
-            steps = 15000 + (uint256(keccak256(abi.encodePacked(blockhash(block.number - 1), date))) % 5001);
+            steps =
+                15000 +
+                (uint256(
+                    keccak256(
+                        abi.encodePacked(blockhash(block.number - 1), date)
+                    )
+                ) % 5001);
         }
 
         if (userQuestDate[_address] != currentDate) {
