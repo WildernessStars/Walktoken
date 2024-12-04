@@ -22,16 +22,17 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try{
-    const { url, id } = await req.json();
+    const { url, tid } = await req.json();
     const fileName = path.join(process.cwd(), 'src', 'lib', 'minted_nfts.json');
+    console.log(fileName);
     let data = [];
     const fileContent = await fs.readFile(fileName, 'utf-8');
     data = JSON.parse(fileContent);
-    data[url] = id;
+    data[url] = tid;
     await fs.writeFile(fileName, JSON.stringify(data, null, 2));
     return NextResponse.json({ success: data}, { status: 200 });
   } catch(error){
-    console.error('Error reading NFT data:', error);
+    console.error('Error writing NFT data:', error);
     return NextResponse.json({ error: error }, { status: 500 });
   }
 }
