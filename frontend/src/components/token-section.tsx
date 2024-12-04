@@ -84,6 +84,7 @@ const MintButton = styled(Button)(({  }) => ({
     const [checkedIn, setCheckedIn] = useState(false);
     const [takenChallenge, setTakenChallenge] = useState(false);
     const [takePending, setTakePending] = useState(false);
+    const [takeDone, setTakeDone] = useState(false);
   
     const handleSignOut = async () => {
     await signOut();
@@ -123,6 +124,31 @@ const MintButton = styled(Button)(({  }) => ({
           setNotIssued('Error');
         }
       };
+
+      const getChallengeDone = async () => {
+        if(isConnected){
+          try{
+            const [addresses] = await sdk.getWalletAddress("ethereum");
+            const hasDone = await sdk.callContractMethod({
+              method: "hasDoneQuest",
+              params: [addresses],
+              abi: abi,
+              contractAddress: contract,
+            });
+            const hasToday = await sdk.callContractMethod({
+              method: "hasQuest",
+              params: [addresses],
+              abi: abi,
+              contractAddress: contract,
+            });
+            setTakeDone(hasDone && hasToday);
+            setTakenChallenge(hasToday);
+            
+          } catch (error) {
+          console.error("Error fetching challenge status:", error);
+          }
+        }
+      }
   
       function waitForQuestUpdate(contract: ethers.Contract): Promise<number>  {
         return new Promise((resolve) => {
@@ -138,18 +164,24 @@ const MintButton = styled(Button)(({  }) => ({
           if(!takenChallenge){
             setTakePending(true);
             setTakenChallenge(true);
-            await window.ethereum.request({method: 'eth_requestAccounts'})
-            const provider = new BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner()
-            const contracti = new ethers.Contract(contract, abi, signer);
-            const p = waitForQuestUpdate(contracti)
-            await contracti.takeQuest(address);
-            const newGoal = await p;
+            let newGoal = Number(sessionStorage.getItem("newGoal"));
+            if(newGoal == undefined || newGoal == null || newGoal == 0){
+              await window.ethereum.request({method: 'eth_requestAccounts'})
+              const provider = new BrowserProvider(window.ethereum);
+              const signer = await provider.getSigner()
+              const contracti = new ethers.Contract(contract, abi, signer);
+              const p = waitForQuestUpdate(contracti)
+              await contracti.takeQuest(address);
+              newGoal = await p;
+              sessionStorage.setItem("newGoal", newGoal.toString());
+              console.log(newGoal.toString());
+            }
             setTakePending(false);
-
-            setStepGoal(Number(newGoal));
+            console.log(newGoal);
+            setStepGoal(newGoal);
             // console.log(stepGoal);
-            setCurrentSteps(20000);
+            setCurrentSteps(newGoal);
+            sessionStorage.setItem("currentStep", newGoal.toString());
             // Simulate step progress
             const interval = setInterval(() => {
               setCurrentSteps(prev => {
@@ -160,7 +192,9 @@ const MintButton = styled(Button)(({  }) => ({
                 return prev + Math.floor(Math.random() * 100);
               });
             }, 1000);
+            setTakeDone(true);
           }else if(currentSteps >= stepGoal){
+            
             const result = await sdk.callContractMethod({
               method: "finishQuest",
               params: [address],
@@ -200,6 +234,7 @@ const MintButton = styled(Button)(({  }) => ({
                 await mintTx.wait();
                 alert(`You got a NFT: WALK HKUST`);
                 setCheckedIn(true);
+                sessionStorage.setItem("checkedIn", "true");
                 if (typeof (window as Window).fetchNFTs === 'function' && typeof window !== 'undefined' && window.fetchNFTs) {
                   window.fetchNFTs();
                 }
@@ -242,12 +277,17 @@ const MintButton = styled(Button)(({  }) => ({
 
       useEffect(() => {
         getNotIssued();
+        setStepGoal(Number(sessionStorage.getItem("newGoal")));
+        setCurrentSteps(Number(sessionStorage.getItem("currentStep")));
+        setCheckedIn(Boolean(sessionStorage.getItem("checkedIn")));
+        getChallengeDone();
       }, []); 
 
     
       useEffect(() => {
         if (isConnected) {
           getBalance();
+          getChallengeDone();
         }
         getNotIssued();
       }, [isConnected, mintDone]);
@@ -430,7 +470,7 @@ const MintButton = styled(Button)(({  }) => ({
                   size={290} 
                 />
               <Typography variant="subtitle1">
-                Goal: {stepGoal} steps
+                Goal: { stepGoal} steps
               </Typography>
 
               <LinearProgress 
@@ -460,8 +500,8 @@ const MintButton = styled(Button)(({  }) => ({
                                 color="#1976D2"
                             >
                                 {isConnected
-                                ? (takenChallenge ? (takePending ? "Pending": (currentSteps >= stepGoal ? "Done": "In progress"))
-                                : "Start New Challenge") : "Start New Challenge"}
+                                ? (takeDone ? "Done" : (takenChallenge ? (takePending ? "Pending": (currentSteps >= stepGoal && stepGoal != 0 ? "Done": "In progress"))
+                                : "Start New Challenge")) : "Start New Challenge"}
               </CustomGlowingButton>
             </div>
           </CardContent>
