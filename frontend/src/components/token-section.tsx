@@ -454,18 +454,6 @@ const MintButton = styled(Button)(({  }) => ({
             <div className="relative group" key="r">
                <div className="absolute -inset-0.5 bg-blue-500 rounded-full opacity-75 group-hover:opacity-100 blur transition duration-1000 group-hover:duration-200 animate-pulse" key="b"></div>
 
-            {/* <Button 
-              variant="contained" 
-              onClick={handleStepChallenge}
-              sx={{
-                backgroundColor: '#2196F3',
-                '&:hover': {
-                  backgroundColor: '#1976D2'
-                }
-              }}
-            >
-              Start New Challenge
-            </Button> */}
 
             <CustomGlowingButton key="challenge" 
                                 onClick={handleStepChallenge}

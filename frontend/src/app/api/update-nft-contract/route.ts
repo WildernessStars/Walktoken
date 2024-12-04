@@ -21,7 +21,8 @@ export async function POST(req: Request) {
     await fs.writeFile(filePathAbi, abi);
     const filePathAddr = path.join(process.cwd(), 'src', 'components', 'address.json');
     const addrs = await fs.readFile(filePathAddr, 'utf-8');
-    let data = JSON.parse(addrs);
+    let data = [];
+    data = JSON.parse(addrs);
     data["WalkTokenAddress"] = address;
     await fs.writeFile(filePathAddr, JSON.stringify(data, null, 2));
     
